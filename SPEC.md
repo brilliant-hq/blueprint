@@ -105,4 +105,4 @@ property that does not round-trip is a bug, not an accepted limitation.
 - [`objects-syntax.md`](https://github.com/brilliant-hq/brilliant/blob/main/objects-syntax.md): how agents emit Blueprint in a reply.
 - [`reference/`](reference/): the detailed authoring guides (core, layout, paint, text, vectors, lines,
   effects, components, arcs, images, directives).
-- The design-system DSL (`.ds`) is documented under the [design-system knowledge](https://github.com/brilliant-hq/brilliant/tree/main/knowledge/design-systems).
+- The design-system DSL (`.ds`) is documented in its own [language spec](https://github.com/brilliant-hq/design-system).
