@@ -12,7 +12,7 @@ Assumes: `blueprint/core`, `blueprint/paint`
 
 **Node types:** `st` (straight, default) · `mi` (mirrored/smooth) · `as` (asymmetric) · `di` (disconnected)
 
-**Auto-smooth curves:** Mark nodes as `mi` — system computes tangent-based handles at 30% of edge length. No manual handle coordinates needed. Edges without explicit handles default to `(0,0,0,0)` and are auto-computed for `mi` nodes.
+**Auto-smooth curves:** Mark nodes as `mi`, system computes tangent-based handles at 30% of edge length. No manual handle coordinates needed. Edges without explicit handles default to `(0,0,0,0)` and are auto-computed for `mi` nodes.
 
 **Auto edges:** If edges are omitted entirely, they're generated sequentially (node 0→1→2→...).
 
@@ -38,11 +38,11 @@ Outside stroke `pos(o)` pushes boundary strokes beyond the bbox. Clip frame crop
 
 ## Full-fidelity networks
 
-With explicit edges, arbitrary topology is preserved exactly — shared
+With explicit edges, arbitrary topology is preserved exactly, shared
 nodes, T-junctions, dangling stroke edges. A node takes an optional 5th
 slot for its stroke cap: `(0,0,40,mi,ar)` (`r`/`n`/`sq`/`ar`/`c`).
 Regions (faces) can be declared explicitly inside `v()`:
-`regions[(0+1+2+),(3+4-5+,hole)]` — each entry walks its boundary edges
+`regions[(0+1+2+),(3+4-5+,hole)]`: each entry walks its boundary edges
 (`edgeId` + `+`/`-` direction), `hole` subtracts. Assign a region's fill
 with a `vr(rN) f[...]` continuation line (rN = 1-based position in the
 regions list). Reading a canvas returns vectors in this same form.

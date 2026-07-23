@@ -17,11 +17,11 @@ Optional args after the source, any order: `img(src, mode, o(N))`. `mode`
 is `fill` (default, covers the element, excess clipped), `fit` (letterboxed
 inside the element, margins transparent), `crop` (free positioning), or
 `repeat` (tiles at natural pixel size from the top-left). `o(N)` sets image
-opacity (0-1). `crop` mode also takes `crop(x0,y0,x1,y1,x2,y2,x3,y3)` — the
+opacity (0-1). `crop` mode also takes `crop(x0,y0,x1,y1,x2,y2,x3,y3)`, the
 four crop-window corners, as emitted by `lookup`. `repeat` mode takes
 `scale(N)` to size the tile (e.g. `img(tile.png, repeat, scale(0.16))`).
 All render on canvas and in exports. Scale modes and interactive crop are
-detailed in `reference/crop`.
+detailed in [`reference/crop`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/reference/crop.md).
 
 ## SVG import
 
@@ -46,4 +46,4 @@ Wikimedia for logos and flags, or DiceBear for avatars
 
 Every icon is an SVG, never a `vector` element and never an emoji. Use
 `generate_image` for photos, product shots, and textures (see
-`images/prompts`).
+[`images/prompts`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/images/prompts.md)).

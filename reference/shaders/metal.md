@@ -35,7 +35,7 @@ For a button, put `metal()` on the stroke and keep the text on a solid
 fill: `f[($color.surface)] st[(metal(),w($stroke.width.mid))]`. On small
 surfaces, `scale(2-4)` shows more of the pattern.
 
-Glass over a metal background: see `effects/glass`.
+Glass over a metal background: see [`effects/glass`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/effects/glass.md).
 
 ## Best uses
 

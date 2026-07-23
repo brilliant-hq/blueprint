@@ -5,16 +5,16 @@ dsl: [line, len, angle, from, to, route, avoid, intent]
 # Blueprint Lines
 
 `line(...)` is the only way to draw a straight line in the DSL. It's
-sugar over a 2-node vector — the resulting element is still a `vector`
+sugar over a 2-node vector, the resulting element is still a `vector`
 under the hood, so caps, strokes, and gradients work exactly like other
 vectors. Two argument shapes cover every use case:
 
 ```
-line(len(N))                                vector form — horizontal len
-line(len(N), angle(deg))                    vector form — len + direction
-line(from(x,y), to(x,y))                    endpoint form — literal points
-line(from(#a), to(#b))                      endpoint form — element refs
-line(from(20,30), to(#b))                   mixed — coord to element
+line(len(N))                                vector form, horizontal len
+line(len(N), angle(deg))                    vector form, len + direction
+line(from(x,y), to(x,y))                    endpoint form, literal points
+line(from(#a), to(#b))                      endpoint form, element refs
+line(from(20,30), to(#b))                   mixed, coord to element
 ```
 
 `connect(...)` was removed. Use `line(from(#a), to(#b))` instead; every
@@ -25,19 +25,19 @@ endpoint-form lines.
 
 | You want… | Form |
 |-----------|------|
-| 1px divider in a layout | `r s(fill,1) f[...]` — not a line at all |
+| 1px divider in a layout | `r s(fill,1) f[...]`: not a line at all |
 | Horizontal segment of length N | `line(len(N))` |
 | Tilted segment of length N at angle | `line(len(N), angle(deg))` |
 | Line between two coordinates | `line(from(x,y), to(x,y))` |
 | Arrow between two elements | `line(from(#a), to(#b)) cap(n,ar) st[...]` |
 | Arrow with smart routing | `line(from(#a), to(#b), intent(dependency))` |
-| Polyline / curve / closed path | `v(nodes[...])` — not a line |
+| Polyline / curve / closed path | `v(nodes[...])`: not a line |
 
 Lines always render with a stroke (open paths can't be filled). Add
 `st[...]` or use `intent(...)` for a preset stroke. The parser rejects
 strokeless lines at parse time.
 
-## Vector form — `line(len(N) [, angle(deg)])`
+## Vector form: `line(len(N) [, angle(deg)])`
 
 ```
 line(len(120)) st[($color.outline,w(1))]                       horizontal
@@ -52,7 +52,7 @@ line(len(120), angle(180)) st[($color.outline,w(1))]           leftward
 Negative lengths are allowed: `line(len(-100))` is identical to
 `line(len(100), angle(180))`. Pick whichever reads clearer.
 
-## Endpoint form — `line(from(...), to(...))`
+## Endpoint form: `line(from(...), to(...))`
 
 ```
 line(from(0,0), to(120,40)) st[($color.outline,w(1))]          coord → coord
@@ -78,7 +78,7 @@ auto-`abs` so it doesn't shift siblings. Override placement with
 
 With two coord endpoints, the line stays at the position you gave it.
 
-## Routing, avoidance, intent — endpoint form modifiers
+## Routing, avoidance, intent: endpoint form modifiers
 
 These work on any endpoint-form line (coord or ref endpoints).
 
@@ -88,13 +88,13 @@ avoid(none|endpoints|all)                obstacle dodging, default all
 intent(dependency|flow|annotation)       preset route + avoid + cap + stroke
 ```
 
-- `intent(dependency)` — elbow + arrow, thin gray. Prerequisite chains, Gantt links.
-- `intent(flow)` — elbow + arrow, bold dark. Flowchart and sequence steps.
-- `intent(annotation)` — straight, no arrow, hairline gray. Callouts.
+- `intent(dependency)`: elbow + arrow, thin gray. Prerequisite chains, Gantt links.
+- `intent(flow)`: elbow + arrow, bold dark. Flowchart and sequence steps.
+- `intent(annotation)`: straight, no arrow, hairline gray. Callouts.
 
 Intent presets seed defaults; an explicit `route()`/`avoid()`/`st[]`/
 `cap()` always wins. Pass `intent()` whenever you don't need to fight the
-defaults — it's the fastest path to a polished result.
+defaults, it's the fastest path to a polished result.
 
 ```
 line(from(#a), to(#b), intent(flow))                       preset
@@ -120,20 +120,20 @@ start node is `p()`, the end node is at the tip of the rotated segment.
 The parser/validator stops these at parse time rather than producing
 silent visual bugs at render time:
 
-- `line(100)` — bare numeric. Use `line(len(100))`.
-- `line(len(100)) s(W,H)` — `s()` not allowed on line; length lives in `len()`.
-- `line(from(...), to(...)) s(W,H)` — same.
-- `line(len(100)) rot(45)` — use `angle()` instead.
-- `line(from(...), to(...)) rot(45)` — direction comes from the points.
-- `line(len(100))` with no stroke and no intent — open paths render nothing.
-- `line(len(100), from(#a))` — pick one form, don't mix.
-- `connect(#a, #b)` — removed; use `line(from(#a), to(#b))`.
+- `line(100)`: bare numeric. Use `line(len(100))`.
+- `line(len(100)) s(W,H)`: `s()` not allowed on line; length lives in `len()`.
+- `line(from(...), to(...)) s(W,H)`: same.
+- `line(len(100)) rot(45)`: use `angle()` instead.
+- `line(from(...), to(...)) rot(45)`: direction comes from the points.
+- `line(len(100))` with no stroke and no intent, open paths render nothing.
+- `line(len(100), from(#a))`: pick one form, don't mix.
+- `connect(#a, #b)`: removed; use `line(from(#a), to(#b))`.
 
 ## `line` is a vector
 
 Anything you can do to a vector applies to a line: `f[...]` (no effect on
 the open path itself, but used for fills on closed segments if you
 construct one), `st[...]`, `cap(...)`, `o(...)`, `flip(...)`. Use `lookup
-format:"blueprint"` to inspect — the returned element is a `vector` with
+format:"blueprint"` to inspect, the returned element is a `vector` with
 two nodes. The `line(...)` syntax is sugar over the underlying vector;
 the underlying vector is the source of truth.

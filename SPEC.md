@@ -3,7 +3,8 @@
 Blueprint is Brilliant's design language: a concise, lossless, versioned text representation of a
 design. It is the canonical storage format for Brilliant designs and the surface both humans and
 agents read, write, review, and diff. This document is the authoritative language reference. The
-detailed authoring guides live alongside it (`knowledge/blueprint/*.md`), and `objects-syntax.md`
+detailed authoring guides live alongside it under [`reference/`](reference/), and
+[`objects-syntax.md`](https://github.com/brilliant-hq/brilliant/blob/main/objects-syntax.md)
 covers how agents emit Blueprint in a chat reply.
 
 ## 1. Design goals
@@ -44,10 +45,10 @@ and `al()` take children.
 - **Geometry**: `p(x,y)`, `s(w,h)` (`number`/`fill`/`fill:N`/`hug`), `rot(N)`, `o(N)` opacity,
   `flip(h,v)`, `rd(...)` corner radii, `min()`/`max()`, `abs`, `clip`, `isolate`, `blend(mode)`.
 - **Paint**: `f[...]` compositing fill stack (solid, gradients, shaders, image, glass, effect fills),
-  `st[...]` stroke stack (`pos(c|i|o)`, per-side `w(t,r,b,l)`, caps, dashes). See `paint.md`.
-- **Layout**: `al(dir, g(), pad(), x(), y(), wrap)`, per-child sizing/flex/min-max. See `layout.md`.
+  `st[...]` stroke stack (`pos(c|i|o)`, per-side `w(t,r,b,l)`, caps, dashes). See [`paint.md`](reference/paint.md).
+- **Layout**: `al(dir, g(), pad(), x(), y(), wrap)`, per-child sizing/flex/min-max. See [`layout.md`](reference/layout.md).
 - **Text**: `t(...)` with weights, alignment, line/letter spacing, paragraph controls, per-run `spans[]`.
-  See `text.md`.
+  See [`text.md`](reference/text.md).
 - **Effects**: element-level `shadow`/`outerglow`/`eblur` and fill-type `inner`/`glow`/`blur`/`glass`.
 - **Vectors**: `v(nodes[(id,x,y,type)], edges[(id,a,b,handles)], regions[...])`, the planar-graph form
   (see §6). **Components**: `comp`/`axes[]`/`variant()`/`inst()`/`at()`/`override()`/`slot`.
@@ -101,7 +102,7 @@ property that does not round-trip is a bug, not an accepted limitation.
 
 ## 9. Related references
 
-- `objects-syntax.md`: how agents emit Blueprint in a reply.
-- `knowledge/blueprint/*.md`: the detailed authoring guides (core, layout, paint, text, vectors, lines,
+- [`objects-syntax.md`](https://github.com/brilliant-hq/brilliant/blob/main/objects-syntax.md): how agents emit Blueprint in a reply.
+- [`reference/`](reference/): the detailed authoring guides (core, layout, paint, text, vectors, lines,
   effects, components, arcs, images, directives).
-- The design-system DSL (`.ds`) is documented under the design-system knowledge.
+- The design-system DSL (`.ds`) is documented under the [design-system knowledge](https://github.com/brilliant-hq/brilliant/tree/main/knowledge/design-systems).

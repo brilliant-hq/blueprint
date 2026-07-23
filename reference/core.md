@@ -14,7 +14,7 @@ al(v,g($spacing.lg),pad($spacing.xl)) s(360,hug) f[($color.surface)] rd($radius.
 
 **Types** (the only valid ones; no `rect`/`div`/`img` aliases): `r`
 rectangle, `c` circle, `t("text",font,size)`, `line(...)` straight line
-(sugar over a vector — see `blueprint/lines`), `fr` frame, `gr` group,
+(sugar over a vector, see `blueprint/lines`), `fr` frame, `gr` group,
 `al()` auto layout, `svg(icon:name)` Phosphor icon, `v()` vector
 (charts and freeform paths only), `mask` / `mask(alpha)` /
 `mask(luminance)` mask frame (last child is the mask shape),
@@ -41,7 +41,7 @@ wrapping: see `blueprint/layout`.
 
 **Refs**: omit IDs on new elements. A 16-char hex id or `#ref` as the
 first token modifies that element; a trailing `#ref` assigns one. A
-trailing `"text"` is a NAME — display only, NOT addressable later.
+trailing `"text"` is a NAME, display only, NOT addressable later.
 Anything you might modify or delete needs `#ref`, not just a name.
 
 **Modify is flat**: one line per element, never indented. A line with no
@@ -52,6 +52,6 @@ an existing one, use `parent(#target)` (see `blueprint/directives`).
 an undo checkpoint; `--` is plain narration.
 
 **Tokens**: in explicit mode every color, font, and scale slot takes a
-`$token`; bare hex or numerics halt the call (see `design-systems/core`).
+`$token`; bare hex or numerics halt the call (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)).
 Text with no `f[]` defaults to `$color.text.primary`, and is `hug`
 (single line) unless `s(fill,hug)` lets it wrap.

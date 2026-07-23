@@ -36,7 +36,7 @@ stroke).
 
 Every color slot takes a `$token` (solid fills, gradient stops, shader
 colors, effect colors); token-bound stops follow brand and mode, and bare
-hex is rejected (see `design-systems/core`). Radial accepts placement:
+hex is rejected (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)). Radial accepts placement:
 `radial(cx(25),cy(15),r(50),$primary.mid,$primary.intense)`.
 
 ## Image filters

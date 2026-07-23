@@ -4,7 +4,7 @@ dsl: [irid, spread, intensity, metallic]
 ---
 # Shader: Iridescent
 
-Iridescent liquid crystal — deep shifting colors with metallic surface tension. The default (Oil Slick) produces a dark, luxurious look. Supports 3 colors.
+Iridescent liquid crystal, deep shifting colors with metallic surface tension. The default (Oil Slick) produces a dark, luxurious look. Supports 3 colors.
 
 ## Parameters
 
@@ -14,12 +14,12 @@ Iridescent liquid crystal — deep shifting colors with metallic surface tension
 
 Tailwind stops cover most recipes directly. Tuned ones get an `$art.*` extension on the active DS.
 
-- `irid()` — Oil Slick (default: deep purple/teal/violet)
-- `irid($indigo.intense,$orange.mid,$violet.mid)` — Deep Sapphire
-- `irid($zinc.intense,$emerald.mid,$cyan.mid)` — Dark Emerald
-- `irid($slate.intense,$indigo.mid,$purple.mid)` — Void Indigo
-- `irid($pink.mid,$purple.mid,$indigo.mid)` — Pink Nebula
-- `irid($emerald.mid,$cyan.mid,$amber.mid)` — Aqua Prism
+- `irid()`: Oil Slick (default: deep purple/teal/violet)
+- `irid($indigo.intense,$orange.mid,$violet.mid)`: Deep Sapphire
+- `irid($zinc.intense,$emerald.mid,$cyan.mid)`: Dark Emerald
+- `irid($slate.intense,$indigo.mid,$purple.mid)`: Void Indigo
+- `irid($pink.mid,$purple.mid,$indigo.mid)`: Pink Nebula
+- `irid($emerald.mid,$cyan.mid,$amber.mid)`: Aqua Prism
 - Tuned recipe: extend DS with `art.pearl.{1..3}` and reference
 
 ## Examples
@@ -36,7 +36,7 @@ al(h,x(c),y(c),g($spacing.none),pad($spacing.sm,$spacing.md)) s(hug,hug) f[(irid
   t("Tropical",$font.family,$font.size.xs,sb) f[($neutral.hint)] #tropical_label
 ```
 
-**Glass card over iridescent background** (real refractive `glass` fill — see `effects/glass`):
+**Glass card over iridescent background** (real refractive `glass` fill, see [`effects/glass`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/effects/glass.md)):
 ```
 fr s(360,220) f[($neutral.intense),(f2,irid($pink.mid,$purple.mid,$indigo.mid))] rd($radius.lg) clip "Hero" #hero
   al(v,y(c),x(c),g($spacing.md),pad($spacing.lg)) s(280,hug) f[(glass(frost(4),chroma(0.4)))] st[(solid($neutral.hint,o($visibility.soft)),w($stroke.width.subtle))] rd($radius.lg) shadow($neutral.intense,o($visibility.soft),y(12),blur(32)) abs p(40,c) "Glass" #glass

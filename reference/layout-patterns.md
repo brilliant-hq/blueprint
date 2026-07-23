@@ -18,23 +18,23 @@ gr s(200,200)                              ← group for free p(x,y) positioning
 ```
 
 ## Alignment: `x(...)` / `y(...)`
-Axes are physical, never flip with direction (`x`=horizontal, `y`=vertical). `sb` is main-axis only (`x(sb)` in `al(h)`, `y(sb)` in `al(v)`) and needs a non-`hug` parent with room to distribute. Bottom-center column → `y(e),x(c)`; right-center row → `x(e),y(c)`. Never make empty spacer frames — items right → `x(e)`, opposite edges → `x(sb)` (2 children), top+bottom → `y(sb)` (2 children, fixed/fill height).
+Axes are physical, never flip with direction (`x`=horizontal, `y`=vertical). `sb` is main-axis only (`x(sb)` in `al(h)`, `y(sb)` in `al(v)`) and needs a non-`hug` parent with room to distribute. Bottom-center column → `y(e),x(c)`; right-center row → `x(e),y(c)`. Never make empty spacer frames, items right → `x(e)`, opposite edges → `x(sb)` (2 children), top+bottom → `y(sb)` (2 children, fixed/fill height).
 
 ## Grid patterns
 Row-aligned (table): `al(v,g(1))` → `al(h,g(0)) s(fill,hug)` rows → `s(fill,fill)` cells.
 Column-major (kanban): `al(h,g($spacing.md))` → `al(v,g($spacing.sm)) s(fill,fill)` columns.
 
 ## Group vs Frame vs Absolute
-Frame/auto-layout: structured content (gap, padding, alignment) + linear overlap via `g($spacing.overlap.*)`. Group: free-form `p(x,y)` positioning — charts, decorative/rotated layers. `abs` on an auto-layout child: ignores flow, positions with `p(x,y)`, stays a child (clips/moves/undoes with parent). `p(c,c)` centers in any parent. Pick: badges/dots/floating buttons → `abs`; chart overlays (arcs, rings) → `gr`; avatar/card stacks, badge biting icon → `al` + `g($spacing.overlap.*)`.
+Frame/auto-layout: structured content (gap, padding, alignment) + linear overlap via `g($spacing.overlap.*)`. Group: free-form `p(x,y)` positioning, charts, decorative/rotated layers. `abs` on an auto-layout child: ignores flow, positions with `p(x,y)`, stays a child (clips/moves/undoes with parent). `p(c,c)` centers in any parent. Pick: badges/dots/floating buttons → `abs`; chart overlays (arcs, rings) → `gr`; avatar/card stacks, badge biting icon → `al` + `g($spacing.overlap.*)`.
 
-⚠ **`al(...)` with `x(c)/y(c)` does NOT stack children on top of each other** — centering is within flow, children still run end-to-end. **Concentric** overlap (shared center): `gr` + `p(c,c)`, or `al` + `abs p(c,c)` on every child. **Linear** overlap (siblings pulled together): `al(h,g($spacing.overlap.md))`.
+⚠ **`al(...)` with `x(c)/y(c)` does NOT stack children on top of each other**, centering is within flow, children still run end-to-end. **Concentric** overlap (shared center): `gr` + `p(c,c)`, or `al` + `abs p(c,c)` on every child. **Linear** overlap (siblings pulled together): `al(h,g($spacing.overlap.md))`.
 
 ## Radial placement (petals, ticks, orbiting dots)
 N copies on a circle: **compute each `p()`/`rot()`, never eyeball** (estimates come out lopsided). For copy at angle `θ` (0=up, step `360/N`): `p.x = cx + R·sinθ − halfW`, `p.y = cy − R·cosθ − halfH`. `cx,cy`=hub (group center), `R`=orbit radius, `halfW/H`=half the copy's *rendered* size (subtract: `p()` is top-left). 8 petals, hub (140,140), R=58, copy 64×130:
 ```
 gr p(c,c) s(280,280) "Lotus"
-  v(...) comp p(108,17) s(80,130) f[(...)] "Petal" #petal  -- θ=0 top. comp on a vector wraps it; rendered size (here 64×130) may differ from s() — use it for halfW/H
-  inst(#petal) p(149,34)  rot(45)   -- rot() pivots on the copy's OWN center, so position FIRST then rotate — rotating in place collapses all copies onto the hub as a star
+  v(...) comp p(108,17) s(80,130) f[(...)] "Petal" #petal  -- θ=0 top. comp on a vector wraps it; rendered size (here 64×130) may differ from s(), use it for halfW/H
+  inst(#petal) p(149,34)  rot(45)   -- rot() pivots on the copy's OWN center, so position FIRST then rotate, rotating in place collapses all copies onto the hub as a star
   inst(#petal) p(166,75)  rot(90)   -- right
   inst(#petal) p(149,116) rot(135)
   inst(#petal) p(108,133) rot(180)  -- bottom

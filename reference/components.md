@@ -56,4 +56,4 @@ al(v,g($spacing.sm),pad($spacing.lg)) s(hug,hug) f[($color.surface.container)] r
 
 Reconfigure on canvas: `#row_2 at(accessory(toggle))`; `override()` on a non-slot child changes its existing props (locks that category vs master edits); new content needs a `slot`.
 
-`override()` targets a master child — by the `#ref` assigned when the master was built, by a master-child id (any variant's works), or by exact child name — and lands on that instance's own copy. Give each new element its own fresh `#ref`; re-using a taken ref keeps the original binding.
+`override()` targets a master child, by the `#ref` assigned when the master was built, by a master-child id (any variant's works), or by exact child name, and lands on that instance's own copy. Give each new element its own fresh `#ref`; re-using a taken ref keeps the original binding.

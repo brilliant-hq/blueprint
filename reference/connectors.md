@@ -16,6 +16,6 @@ line(from(#card_port), to(#b))             nested-child anchor on the parent
 
 Endpoint-form lines also support coord endpoints (`from(x,y)`), which is
 useful for callouts, fixed-point annotations, and any "draw between
-these two specific points" need — not possible with connect().
+these two specific points" need, not possible with connect().
 
 Full reference: see `blueprint/lines`.
