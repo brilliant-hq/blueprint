@@ -634,6 +634,7 @@ Extra      ::= Weight | "align(" A ")" | "valign(" V ")" | "lh(" LH ")" | "ls(" 
              | "rtl" | "ltr" | "italic" | "underline" | "strike" | "case(" C ")"
              | "clamp(" Num ")" | "feat(" Feat ")" | "typo(" "$" TokenPath ")"
              | "$" TokenPath | WeightWord ":$" TokenPath
+LH         ::= Num | Num ":$" TokenPath | "$" TokenPath | "auto" "," Num
 ```
 
 Positions 1 (content), 2 (family), and 3 (size) are positional; everything from position 3 onward is order-independent. Arguments are split on commas, respecting nesting.
@@ -647,6 +648,7 @@ An empty first slot skips (preserves on modify; on create it is an error, B204).
 - **Family.** Empty skips. `$font.family` or a typography token binds a font token; `Inter:$font.family` is the tagged form. A bare family name resolves through a font-fallback map (Helvetica, Arial map to the bundled default) on the authoring path, and is identity during a canonical build.
 - **Size.** Empty skips. A token binds a size token; otherwise a number (default 24).
 - **Weight and extras.** `align(l|c|r|j)`, `valign(t|c|b)`, `lh(N)` line height (a multiplier in `0..3`; values above 3 are read as pixels and divided by the font size), `ls(N)` letter spacing (px, `Npx`, or `Nem`), `ps(N)` paragraph spacing, `pi(N)` paragraph indent, `lsp(N)` list spacing, `li(...)` list types, `rtl`/`ltr` direction, `italic`, `underline`, `strike`, `case(upper|lower|title|none)`, `clamp(N)` max lines, `feat(...)` font features, `typo($typography.X)` a typography token. A positional `$token` after size is a weight token; `sb:$font.weight.strong` is the tagged form; any other bare value is a weight word (`r`, `m`, `sb`, `b`, `eb`, `bl`).
+- **Auto line height.** `lh(auto,X)` is the auto-plus-carrier form: the line height is automatic — it tracks the font, re-deriving when the font changes during an edit — and `X` is the resolved multiplier every conforming host renders with, so the same document renders identically everywhere. Canonical storage always carries this form for a text whose line height the author never set. `lh(N)` stays author-explicit and is never re-derived; a token-bound line height always emits the explicit tagged form. A bare `lh(auto)` is a forgiving read: treated as an unset slot (the line height resolves from the font's own metrics), with a diagnostic teaching the two-slot form.
 
 ### 9.4 Styled runs (`spans[...]`)
 
@@ -1395,6 +1397,7 @@ Absorptions applied outside the line preprocessor:
 | `o(N)` with N above 1 | interpreted as a percentage, divided by 100, with a note |
 | `smooth(N%)` or `smooth(N>1)` | fraction in `0..1`, with a note |
 | `lh(N)` with N above 3 | pixels divided by font size (a multiplier), with a note |
+| bare `lh(auto)` (no carrier) | unset-slot semantics (auto, resolved from the font's metrics), with a note teaching `lh(auto,X)` |
 | a create-time leaf that acquires a child | converted to a container frame (leaf absorption, §5.13) |
 | a flat top-level `override(...)` | modify-by-name (§4.3) |
 | `parent(delete)` on a modify | delete (§15.5) |
