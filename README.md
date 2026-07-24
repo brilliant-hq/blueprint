@@ -121,7 +121,7 @@ The design-system binding surface (`$token` references, tagged literals, discipl
 
 ## 2. Document structure
 
-A Blueprint document is stored as the body of a Brilliant `.design` file. The `.design` container has four parts in order: a version stamp, a YAML frontmatter block, a separator, and the Blueprint body.
+A Blueprint document is stored as the body of a Brilliant `.bl` file: the canonical extension new writes create, and the language's public identity. The legacy extension `.design` is still read and is migrated to `.bl` when a project is opened, so a not-yet-migrated project keeps working; the two extensions denote the same container. The container has four parts in order: a version stamp, a YAML frontmatter block, a separator, and the Blueprint body.
 
 ```
 Document   ::= VersionStamp NL Frontmatter Separator NL Body
@@ -159,7 +159,7 @@ canvas:
 
 Here `{id}` is a carried element identifier (a hexadecimal id present in stored bodies; §3.7, §16.2). In authored input, new elements carry no id and the first token is the type token instead.
 
-NOTE: The Blueprint *body* is what this specification primarily defines; the `.design` container (stamp, frontmatter, separator) is the storage embedding. In an authoring context (for example, submitting lines to the element-creation tool), only the body is provided, and no `bp:v1` stamp is written.
+NOTE: The Blueprint *body* is what this specification primarily defines; the `.bl` container (stamp, frontmatter, separator) is the storage embedding. In an authoring context (for example, submitting lines to the element-creation tool), only the body is provided, and no `bp:v1` stamp is written.
 
 ---
 
