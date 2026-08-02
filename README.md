@@ -9,6 +9,12 @@ This specification is the authoritative language reference. It defines the gramm
 
 Blueprint pairs with, but is distinct from, the design-system DSL that defines the `$token` catalog a Blueprint document binds against. That is a separate language with its own specification at <https://github.com/brilliant-hq/design-system>. Blueprint references its tokens (§16) but does not define them.
 
+## License and scope
+
+This specification is published so that it can be implemented. You may write your own encoder, decoder, renderer, or tooling against it and ship that implementation, commercially or otherwise, with no license from Brilliant and no permission required. An independent implementation is the intended outcome of publishing a conformance specification: a program that satisfies the lossless contract (§17) conforms, whoever wrote it.
+
+That permission covers the *language*, meaning this grammar and its semantics. It does not extend to Brilliant's own software. The Brilliant application, website, and rendering engine, including the WebAssembly engine build served from brilliant.design, are proprietary and separately licensed under the terms at <https://brilliant.design/terms>. Implement the specification, not our binaries.
+
 ## Design goals
 
 These four goals are the invariants every rule in this specification serves. Where a design choice is ambiguous, the resolution that best preserves these goals wins.
