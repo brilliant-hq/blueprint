@@ -15,9 +15,9 @@ eblur(4)                                                                   ← e
 ```
 
 Params (all optional): color (token `$ref` or hex) · `o(N)` opacity (token or 0–1) · `x(N)` · `y(N)` offsets · `blur(N)` · `sp(N)` spread · `blend(mode)`. Stack multiple on one element.
-Defaults, `shadow()`: `$color.shadow o(0.25) y(4) blur(8)`. `outerglow()`: `$color.glow o($visibility.firm) blur(8)`. Color slots default to semantic aliases (`$color.shadow` → `$neutral.intense`, `$color.glow` → `$neutral.hint` in the catalog), so bare effects pick up brand changes automatically.
+Defaults, `shadow()`: `$color.shadow o(0.25) y(4) blur(8)`. `outerglow()`: `$color.glow o(0.6) blur(8)` (the default opacity is a literal 0.6, not a mode-following token). Color slots default to semantic aliases (`$color.shadow` → `$neutral.950`, `$color.glow` → `$neutral.hint` in the catalog), so bare effects pick up brand changes automatically.
 
-**Color and opacity slots both accept tokens.** A token-bound shadow follows brand / mode switches when you bind it to a semantic alias: `shadow($color.shadow, ...)` re-resolves through `theme.dark` if the active mode flips, picking up whatever stop the catalog maps the alias to per mode. Reach for `$visibility.{hint, faint, subtle, soft, mid, firm, bold, strong, intense}` (catalog-bound 9-stop scale from 0.02 to 1.0) instead of arbitrary decimals.
+**Color and opacity slots both accept tokens.** A token-bound shadow follows brand / mode switches when you bind it to a semantic alias: `shadow($color.shadow, ...)` re-resolves through `theme.dark` if the active mode flips, picking up whatever stop the catalog maps the alias to per mode. Reach for `$visibility.{hint, faint, subtle, soft, mid, firm, bold, strong, intense}` (catalog-bound 9-stop scale from 0.05 to 0.95, with `$visibility.invisible` = 0 and `$visibility.opaque` = 1 as separate boundary stops) instead of arbitrary decimals.
 
 Complete card with layered elevation:
 ```

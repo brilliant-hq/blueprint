@@ -13,8 +13,14 @@ linear gradient cannot give.
 radial($center,$edge)                        two-color, centered
 radial(cx(25),cy(15),r(50),$c1,$c2)           positioned (0 = left/top, 50 = center; r: 50 = edge)
 radial(rx(80),ry(40),$c1,$c2)                 elliptical
-radial(cx,cy,rx,ry,stop($c,pos),...)          positional, multi-stop
+radial(cx,cy,ex,ey,stop($c,pos),...)          positional, multi-stop (ex,ey = end point)
 ```
+
+Two coordinate spaces. The **named** form (`cx()`/`cy()`/`r()`/`rx()`/
+`ry()`) is a percentage: `50` = center, `r` `50` reaches the edge. The
+bare **positional** form is alignment space instead: `0` = center, `±1` =
+the edges, and the 3rd and 4th values are the gradient's **end point**
+(which sets both radius and direction) rather than `rx`/`ry` radii.
 
 Stops take tokens for color and opacity, like any fill. Bind to the
 brand (`$primary.mid`) so the gradient follows mode and brand switches;

@@ -27,7 +27,7 @@ rectangle, `c` circle, `t("text",font,size)`, `line(...)` straight line
 squircle corners: `rd(12,smooth(0.6))`), `rot(N)`, `o(N)`, `clip`,
 `isolate` (container flattens before blending, like Figma's Normal;
 default is pass-through; `no-isolate` clears it), `blend(mode)`,
-`flip(h,v)`, `front`/`back`,
+`flip(1,0)` (per-axis 1/0 flags: horizontal, vertical; both required, letters like `h`/`v` are a silent no-op), `front`/`back`,
 `abs` (frees a child from layout flow, position it with `p()`),
 `hidden` (invisible), `locked`, `constrain` (lock aspect ratio;
 `no-constrain` clears). `c` in

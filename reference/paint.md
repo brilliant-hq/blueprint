@@ -18,7 +18,7 @@ f[(linear(135,$violet.mid,$pink.mid))]              linear gradient
 f[(radial($color.surface,$color.on-surface))]       radial gradient
 f[(angular($amber.mid,$red.mid))]                   angular gradient
 f[(metaballs($primary.soft,$primary.mid,$primary.bold))]  shader
-f[(dithering(#101820,#22D3EE,size(6)))]             shader (ordered dither)
+f[(dithering($neutral.intense,$cyan.mid,size(6)))]  shader (ordered dither)
 f[(reactiveGrid())]                                 shader (grid, cursor-reactive)
 f[(img(https://picsum.photos/id/42/800/400))]       image
 f[(img(...)),(halftone(dotSize(8),mode(cmyk)))]     image filter over the fill below
@@ -75,10 +75,13 @@ st[(metal($amber.mid,$amber.faint),w($stroke.width.mid))]
 `pos(c|i|o)` aligns the stroke center / inside / outside. Caps are set
 per node (vector endpoints) and per circle, not on the stroke.
 
-`w(t,r,b,l)` sets per-side widths on rectangles and frames (0 = no
-border on that side): `st[(#E5E7EB,w(0,0,1,0))]` is a bottom divider.
-Any side can bind a token with the same tagged form as the uniform
-width: `w(0,0,1:$stroke.width.subtle,0)`.
+`w(t,r,b,l)` sets per-side widths on rectangles and frames. With a design
+system active, give every side a stroke-width token; `$stroke.width.none` is
+no border on that side. A bottom divider:
+`st[($color.outline.variant,w($stroke.width.none,$stroke.width.none,$stroke.width.subtle,$stroke.width.none))]`.
+In bare-value mode (no design system) use plain numbers instead: `w(0,0,1,0)`.
+Don't mix bare numbers and tokens in one `w()`: a bare number is rejected while
+a design system is active, so keep all four sides tokens.
 
 ## SVG icons & region fills
 

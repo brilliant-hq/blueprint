@@ -143,6 +143,8 @@ The first line of the document is the version stamp `bp:vN`, where `N` is the gr
 
 A document whose first line does not begin with `bp:v` is not a Blueprint document. It is treated as legacy YAML (the v0 fallback, §18.4). A stamp with a version *newer* than the implementation's current version MUST be rejected: it was written by a newer build and cannot be safely decoded.
 
+NOTE: The `bp:v` stamp is a claim about framing, not proof of content. On decode the implementation additionally inspects the body: a `bp:v`-stamped document whose body is in fact legacy YAML is routed through the legacy YAML lane rather than the canonical builder. The effective decode lane is therefore chosen by the body, gated behind the stamp; a genuine canonical body under a `bp:v` stamp always takes the canonical lane.
+
 ### 2.2 Frontmatter
 
 Between the version stamp and the separator is a YAML map carrying canvas-level state. The canvas scalars live under a top-level `canvas:` key; the recognized scalars are `background` / `backgroundColor`, `backgroundEnabled`, `blackboardColor`, `rulerGuides`, and `designSystem`. The frontmatter MAY be empty. A `version:` key, if present in legacy input, is dropped on canonical encode because the `bp:v` stamp is the version of record.
@@ -271,7 +273,7 @@ The entire grammar is built on four token shapes and three reused idioms. No oth
 
 | Shape | Role |
 |---|---|
-| `name(params)` | Records and scalar properties: `p(x,y)`, `w(2)`, `rd(8)`, `pos(o)`, `arc(0,270)`. |
+| `name(params)` | Records and scalar properties: `p(x,y)`, `w(2)`, `rd(8)`, `pos(o)`, `arc(0,75)`. |
 | `name[items]` | Lists and stacks, each item conventionally wrapped in `()`: `f[...]`, `st[...]`, `nodes[...]`, `edges[...]`, `axes[...]`, `spans[...]`. |
 | Bare flag | A single boolean: `clip`, `italic`, `comp`, `slot`, `locked`, `hidden`, `abs`, `mask`, `front`, `back`, `frozen`, `wrap`, `off`. |
 | Bare keyword | A type token in first position: `r`, `c`, `fr`, `gr`, `text`. |
@@ -312,6 +314,8 @@ A create line has no leading id, session reference, or override target; the buil
 ### 4.2 Type-token recovery
 
 If the token in the type position is not an element-type token and is not a leading directive (`before(`, `after(`, `replace(`, `clone(`), the parser scans forward, stopping at a quoted name or a `#ref`, for the first element-type token and hoists it into the type slot, with a recovered-element-type note. This rescues a line where a property was written before the type, for example `ds(,theme(dark)) fr ...`.
+
+NOTE: The forward scan does not rescue a *leading* token of function-call shape (`word(...)`) that matches no element type and no directive. Such a leading token is a fatal error, not a defaulted rectangle (§5.11): the parser refuses to absorb an unknown parenthesized head into a phantom element. This is distinct from a *trailing* unrecognized property token, which is non-fatal and dropped (§4.5).
 
 ### 4.3 Create absorbed into modify
 
@@ -369,15 +373,17 @@ r s(120,80) rd(12) f[(#2D6CDF)] "Card"
 
 `c` creates a circle (an ellipse filling its box). Default is a solid circle at 100 by 100. Circle geometry is refined by:
 
-- `arc(start,sweep)`: start angle and sweep in degrees, making a pie slice or arc. As a type token, `arc(start,sweep)` is shorthand for `c arc(start,sweep)` when its first argument is numeric.
+- `arc(start,sweep)`: `start` is the start angle in degrees; `sweep` is the swept portion of a full circle as a **percent** in `[0,100]` (not degrees), so `arc(0,75)` is a three-quarter arc and `arc(0,100)` a full circle. As a type token, `arc(start,sweep)` is shorthand for `c arc(start,sweep)` when its first argument is numeric.
 - `ratio(N)`: an inner radius ratio in `[0,1]`, making a ring or donut when combined with an arc.
 - `cap(start,end)`: end-cap styles for an arc's stroke.
 
 Example (validated, sovereign):
 
 ```
-c s(80,80) arc(0,270) ratio(0.6) st[(#0080FF,w(8))] "Meter"
+c s(80,80) arc(0,75) ratio(0.6) st[(#0080FF,w(8))] "Meter"
 ```
+
+NOTE: A `sweep` of 100 or more denotes a full circle. In the forgiving authoring dialect a `sweep` above 100 is a fatal error that teaches the percent form, so a degrees-shaped `arc(0,270)` never silently mints a full circle; in canonical storage decode a stored `sweep` above 100 loads as a full circle with a non-fatal info note, so a legacy or hand-authored file never fails to open. `start` is always in degrees.
 
 See [`arcs.md`](reference/arcs.md) for progress rings, donut and pie charts, and activity meters.
 
@@ -507,7 +513,7 @@ The table lists every property token, its grammar, the map key(s) it emits, and 
 | `st[...]` | §7 | strokes | none | replaces / mutates |
 | `shadow(...)`, `outerglow(...)`, `eblur(...)` | §8 | effects | none | accumulate |
 | `grid(...)` | layout grid | frame grids | none | append |
-| `arc(start,sweep)` | two numbers | `arcStart`,`arcSweep` | solid circle | n/a |
+| `arc(start,sweep)` | start (deg), sweep (percent 0 to 100) | `arcStart`,`arcSweep` | solid circle | n/a |
 | `ratio(n)` | `0..1` | `arcRatio` | none | n/a |
 | `cap(s,e)` | short cap names | `capStart`,`capEnd` | none | per-position skip |
 | `before(id)` / `after(id)` / `parent(id)` | ref | sibling/parent placement | n/a | reorder / reparent |
@@ -515,9 +521,9 @@ The table lists every property token, its grammar, the map key(s) it emits, and 
 | `#ref` (trailing) | ref | `assignRef` | n/a | assign ref |
 | `"name"` (trailing) | quoted | `name` | generated | replaces |
 
-Storage-dialect carriers `obb(...)`, `ext(...)`, `fixed(...)`, `hug:N`, component tokens `axes[...]`/`props[...]`/`variant(...)`/`at(...)`/`mref(...)`/`ov[...]`, and the vector continuation `vr(...)` are covered in their respective sections (§13, §11, §16.2).
+Storage-dialect carriers `obb(...)`, `ext(...)`, `hug:N`, component tokens `axes[...]`/`props[...]`/`variant(...)`/`at(...)`/`mref(...)`/`ov[...]`, and the vector continuation `vr(...)` are covered in their respective sections (§13, §11, §16.2).
 
-NOTE: `fixed(w,h)` is the only token that mints the fixed-size memo used by layout; a numeric `s(W,H)` does not. This distinction matters for the round-trip of a fill-sized child that remembers a prior fixed extent.
+NOTE: There is no fixed-size memo. An element's one size is its geometry, carried by `s(w,h)` (and, at storage, by `ext(...)` and `hug:N`). The retired `fixed(w,h)` token is accepted and ignored on read for backward compatibility, and is never emitted.
 
 NOTE (implementation): The `underline` bare flag emits a map key that differs from the `underlined` key produced inside `t(...)`. A bare `underline` written after a `t(...)` on the same line may not take effect. Prefer specifying underline inside `t(...)` (§9). This asymmetry is tracked as a defect and does not change the normative meaning of underline.
 
@@ -651,7 +657,7 @@ An empty first slot skips (preserves on modify; on create it is an error, B204).
 
 ### 9.3 Family, size, weight, and extras
 
-- **Family.** Empty skips. `$font.family` or a typography token binds a font token; `Inter:$font.family` is the tagged form. A bare family name resolves through a font-fallback map (Helvetica, Arial map to the bundled default) on the authoring path, and is identity during a canonical build.
+- **Family.** Empty skips. `$font.family` or a typography token binds a font token; `Inter:$font.family` is the tagged form. A bare family name is stored verbatim; a look-alike map (Helvetica, Arial, and other common system faces) does not remap the value but emits a warning naming the bundled face the author could pin instead. The retired platform sentinels (`System`, `System Font`, and an empty family) still migrate to the bundled default. During a canonical build the family is identity.
 - **Size.** Empty skips. A token binds a size token; otherwise a number (default 24).
 - **Weight and extras.** `align(l|c|r|j)`, `valign(t|c|b)`, `lh(N)` line height (a multiplier in `0..3`; values above 3 are read as pixels and divided by the font size), `ls(N)` letter spacing (px, `Npx`, or `Nem`), `ps(N)` paragraph spacing, `pi(N)` paragraph indent, `lsp(N)` list spacing, `li(...)` list types, `rtl`/`ltr` direction, `italic`, `underline`, `strike`, `case(upper|lower|title|none)`, `clamp(N)` max lines, `feat(...)` font features, `typo($typography.X)` a typography token. A positional `$token` after size is a weight token; `sb:$font.weight.strong` is the tagged form; any other bare value is a weight word (`r`, `m`, `sb`, `b`, `eb`, `bl`).
 - **Auto line height.** `lh(auto,X)` is the auto-plus-carrier form: the line height is automatic — it tracks the font, re-deriving when the font changes during an edit — and `X` is the resolved multiplier every conforming host renders with, so the same document renders identically everywhere. Canonical storage always carries this form for a text whose line height the author never set. `lh(N)` stays author-explicit and is never re-derived; a token-bound line height always emits the explicit tagged form. A bare `lh(auto)` is a forgiving read: treated as an unset slot (the line height resolves from the font's own metrics), with a diagnostic teaching the two-slot form.
@@ -684,7 +690,7 @@ Gap        ::= Num | "$" TokenPath | Num ":$" TokenPath | Num "," Num
 Padding    ::= Num | Num "," Num | Num "," Num "," Num "," Num
 ```
 
-`al(...)` sets an auto-layout frame. Direction is `h` or `v` (default vertical). `wrap` enables wrapping. `x()` and `y()` are physical-axis alignments mapped to main and cross axes by direction: for `al(h)`, `x` is main and `y` is cross; for `al(v)`, `y` is main and `x` is cross. Values are start, center, end, and space-between (`sb`).
+`al(...)` sets an auto-layout frame. Direction is `h` or `v` (default vertical). `wrap` enables wrapping. `x()` and `y()` are physical-axis alignments mapped to main and cross axes by direction: for `al(h)`, `x` is main and `y` is cross; for `al(v)`, `y` is main and `x` is cross. Values are start, center, end, and space-between (`sb`). On a modify of an existing auto-layout frame that does not restate the direction, `x()` and `y()` are re-mapped to main and cross against the frame's own existing direction at build time, so an alignment-only edit is correct regardless of that direction.
 
 `g(N)` is item spacing (token-bindable, or `g(main,cross)` for a two-axis gap). `pad(N)` is uniform padding; `pad(v,h)` and `pad(t,r,b,l)` are the multi-value forms, each all-or-nothing per arity. Empty `pad()` skips.
 
@@ -873,7 +879,7 @@ r s(60,40) p(200,120) f[(#FF3377)] #b
 line(from(#a),to(#b),route(elbow),avoid(all)) cap(n,ar) st[(#111827,w(2))]
 ```
 
-See [`lines.md`](reference/lines.md) and [`connectors.md`](reference/connectors.md).
+See [`lines.md`](reference/lines.md), which also covers connectors.
 
 ---
 
@@ -1045,7 +1051,7 @@ Mark      ::= "//" Label                    (* checkpoint marker line *)
 - `undo("label")` rewinds the session and canvas to the checkpoint registered by that label (`redo("label")` replays forward). A bare `undo`/`redo` without a label is an error. The checkpoint itself is registered by a `// label` marker line or a trailing `// label` on an element line (§3.3).
 - `ds_file("name") <body>` references or declares the design-system document that supplies the `$token` catalog; its body language is specified separately (see §16, design-system note, and <https://github.com/brilliant-hq/design-system>).
 
-Design-system binding and per-element stamping. A bare `$token` on any color, font, or scale slot binds a design-system token (§3.6), resolved after build. The per-element token cascade is overridden by `ds(name, mode(value), ...)`: the first slot is a brand name (empty inherits, as in `ds(,theme(dark))`), and subsequent arguments are `modeName(modeValue)` calls. Children inherit through the cascade, so a stamp is placed only where an override is wanted. An unknown brand is stripped with a diagnostic, preserving the mode overrides. The token *discipline modes* (`default`, which requires token references on tokenizable slots; `new`, which authors a brand; `none`, which permits bare literals) govern whether bare hex and numeric values are accepted; they are a property of the authoring session, summarized here and specified with the design-system DSL.
+Design-system binding and per-element stamping. A bare `$token` on any color, font, or scale slot binds a design-system token (§3.6), resolved after build. The per-element token cascade is overridden by `ds(name, mode(value), ...)`: the first slot is a brand name (empty inherits, as in `ds(,theme(dark))`), and subsequent arguments are `modeName(modeValue)` calls. Children inherit through the cascade, so a stamp is placed only where an override is wanted. An unknown brand is stripped with a diagnostic, preserving the mode overrides. The token *discipline modes* (`default`, which requires token references on tokenizable slots; `new`, which authors a brand; `none`, which permits bare literals) govern whether bare hex and numeric values are accepted; they are a property of the authoring session, summarized here and specified with the design-system DSL. The session's discipline mode is set by a sticky `designSystem` selector on the element-authoring surface: it takes `default`, `new`, `none`, or the name of a brand authored earlier in the session, and once set it persists across later calls until changed (an external session defaults to `none`).
 
 See [`directives.md`](reference/directives.md).
 
@@ -1086,8 +1092,7 @@ The canonical dialect is what the encoder produces for at-rest storage. It is st
   - explicit-zero handle flags on graph edges (the eighth edge slot);
   - self-contained `o(value:$tok)` opacity literals;
   - verbatim `ov[...]` and `mref(ref[,cat...])` override-category sets;
-  - the explicit-empty `f[]` marker;
-  - `fixed(w,h)` when a fixed-size memo is set.
+  - the explicit-empty `f[]` marker.
 
 Numeric precision at the storage boundary is four decimal places: integers are written whole, otherwise the shortest representation that reparses exactly, capped at four decimals, with trailing zeros stripped so a second save is byte-identical.
 
@@ -1124,7 +1129,7 @@ Two distinct migration regimes exist and MUST NOT be conflated:
 1. **YAML (v0) to `bp:v1`.** A document whose first line is not `bp:v` is legacy YAML (the v0 fallback). It is loaded through the YAML reader and re-saved as `bp:v1` on the next write (a full decode and re-encode). This is not a text-to-text step; it is a load-and-re-encode. The migration is non-destructive: originals are preserved under a mirrored archive tree.
 2. **`bp:vN` to `bp:vN+1`.** A future breaking change ships a text-to-text migration that transforms the stored artifact text (frontmatter and body) from one version to the next. The migration runner applies steps forward until the document reaches the current version; a missing step is a defect. No such steps are registered for `bp:v1` (it is the current and only stored version).
 
-The at-rest canonical Blueprint is distinct from the live realtime sync wire, which remains YAML fragments; canonical Blueprint is the storage format, not the transport.
+The live realtime sync wire now carries the same canonical form as at-rest storage: each wire unit is a per-element region of the stored canonical document (a body fragment) under a `bp:v1` header, reassembled server-side by pre-order concatenation in arrival order. Storage and the live transport share one canonical language; the wire is Blueprint, not YAML.
 
 ---
 
@@ -1408,6 +1413,6 @@ Absorptions applied outside the line preprocessor:
 | a flat top-level `override(...)` | modify-by-name (§4.3) |
 | `parent(delete)` on a modify | delete (§15.5) |
 | `filter(name,...)` wrapper | unwrapped to `name(...)`, with a note |
-| a system or branded font name | nearest bundled family (identity during canonical build) |
+| a retired platform-font sentinel (`System`, `System Font`, empty) | the bundled default family; other look-alike names (Helvetica, Arial) are kept verbatim with a warning, not remapped |
 
 The two guards are normative (§17.1). A rewrite MUST have been a previous error, and a rewrite MUST NOT be applied where a capable author might intend the form literally.

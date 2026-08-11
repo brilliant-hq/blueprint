@@ -58,6 +58,8 @@ Negative lengths are allowed: `line(len(-100))` is identical to
 line(from(0,0), to(120,40)) st[($color.outline,w(1))]          coord → coord
 line(from(#a), to(#b)) st[($color.outline,w(1))] cap(n,ar)     ref → ref
 line(from(#card), to(200,40)) st[($color.outline,w(1))]        mixed
+line(from(#a), to(#b, r, 0.25)) intent(dependency)             anchor 25% down b's right edge
+line(from(#card_port), to(#b)) intent(dependency)              nested-child anchor, resolved on the routing parent
 ```
 
 Endpoint shapes per side:
@@ -70,13 +72,15 @@ from(#ref, side, f)   anchor on a side at fractional position f (0..1)
 from(#child_ref)      anchor on a nested element of the routing parent
 ```
 
-With at least one `#ref` endpoint, the line auto-reparents to the
+With **both** endpoints as `#ref`s, the line auto-reparents to the
 **lowest common ancestor** of its endpoints, so its z-order and clipping
-follow the elements it joins. Inside an auto-layout parent it is
+follow the elements it joins. (Auto-reparent is skipped inside a
+component master, and when either endpoint is a coordinate there is no
+element pair to reparent to.) Inside an auto-layout parent it is
 auto-`abs` so it doesn't shift siblings. Override placement with
 `parent(#frame)`.
 
-With two coord endpoints, the line stays at the position you gave it.
+With a coordinate endpoint, the line stays at the position you gave it.
 
 ## Routing, avoidance, intent: endpoint form modifiers
 
@@ -84,7 +88,7 @@ These work on any endpoint-form line (coord or ref endpoints).
 
 ```
 route(straight|elbow|elbow2|bezier)      path shape, default elbow
-avoid(none|endpoints|all)                obstacle dodging, default all
+avoid(none|endpoints|all)                obstacle dodging; default all with two ref endpoints, none when either endpoint is a coordinate
 intent(dependency|flow|annotation)       preset route + avoid + cap + stroke
 ```
 
@@ -108,7 +112,7 @@ line(from(20,30), to(#b), route(elbow), avoid(all)) st[...]   coord origin, smar
 ```
 line(len(120)) st[($gray.bold,w($stroke.width.soft))]
 line(len(120)) cap(n,ar) st[($gray.bold,w($stroke.width.soft))]
-line(from(#a), to(#b)) intent(flow)                    cap/stroke from intent
+line(from(#a), to(#b), intent(flow))                  cap/stroke from intent
 ```
 
 `cap(start, end)` lands on the first and last nodes. For endpoint form

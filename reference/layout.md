@@ -44,7 +44,8 @@ empty slot leaves that axis unconstrained: `min(200,)` sets width only,
 
 **Wrap**: `al(h,wrap,...)` flows overflowing children onto the next row;
 it needs a fixed or fill main-axis size. `g(main,cross)` sets the gap
-between wrap rows separately (`g(8,24)`); `g(N)` uses N for both.
+between wrap rows separately (`g($spacing.sm,$spacing.xl)`); `g(N)` uses
+N for both.
 
 **Centering and `abs`**: `p(c,c)` centers a child, `p(c,20)` / `p(20,c)`
 center one axis. Inside an `al()` a child must be `abs` for `p()` to

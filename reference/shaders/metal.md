@@ -11,9 +11,10 @@ silver chrome.
 ## Parameters
 
 `softness(N)` edge smoothness, `repetition(N)` stripe count (more reads
-as brushed texture), `contour(N)` ridge visibility, `angle(N)` light
-direction, `shiftRed(N)` / `shiftBlue(N)` chromatic aberration,
-`speed(N)` animation. Colors are positional token args.
+as brushed texture), `contour(N)` ridge visibility, `distortion(N)`
+organic warp, `angle(N)` light direction, `shiftRed(N)` / `shiftBlue(N)`
+chromatic aberration, `speed(N)` animation. Colors are positional token
+args.
 
 ## Colors
 

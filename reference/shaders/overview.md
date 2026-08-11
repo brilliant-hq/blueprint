@@ -29,9 +29,12 @@ shader fill on the frame itself, never a separate
 
 `scale(N)` zoom, `uvx(N)`/`uvy(N)` pan, `uvrot(N)` rotate, `opacity(N)`,
 `speed(N)` animation rate, `frozen` to stop animation,
-`shape(none|circle|metaballs)` (metal, irid, steel). On small surfaces
-like button strokes, `scale(2-4)` shows more detail than `scale(1)`. Keep
-`speed` slow on backgrounds, faster on strokes.
+`shape(element|metaballs|none)` (metal, irid, steel): `element` fills the
+layer's own silhouette (the default), `metaballs` renders drifting blobs,
+`none` fills the whole quad. Numeric `shape(0|1|2)` is equivalent
+(`0`=element, `1`=metaballs, `2`=none). On small surfaces like button
+strokes, `scale(2-4)` shows more detail than `scale(1)`. Keep `speed` slow
+on backgrounds, faster on strokes.
 
 `dithering()` adds `size(N)` (dot scale) and numeric `shape(0-6)` /
 `ditherType(0-3)`. `reactiveGrid()` adds `density(N)`, `distortion(N)`,

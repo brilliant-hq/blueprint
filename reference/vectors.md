@@ -26,7 +26,7 @@ v(nodes[(0,0,40,mi),(1,60,16,mi),(2,120,12,mi)]) s(120,48) st[($teal.mid,w($stro
 
 Close with straight bottom nodes + outside stroke + clip frame to hide closing edges:
 ```
-al(v,g($spacing.none),pad(2,$spacing.none,$spacing.none,$spacing.none)) s(hug,hug) clip "ClipFrame"
+al(v,g($spacing.none),pad($spacing.xs,$spacing.none,$spacing.none,$spacing.none)) s(hug,hug) clip "ClipFrame"
   v(nodes[(0,0,40,mi),(1,60,16,mi),(2,120,12,mi),(3,120,48),(4,0,48)],edges[(0,0,1),(1,1,2),(2,2,3),(3,3,4),(4,4,0)],closed) s(120,48) f[($teal.faint)] st[($teal.mid,w($stroke.width.soft),pos(o))]
 ```
 
@@ -34,7 +34,7 @@ Outside stroke `pos(o)` pushes boundary strokes beyond the bbox. Clip frame crop
 
 ## Coordinates
 
-`(0,0)` = top-left (highest value), `(W,H)` = bottom-right (lowest). Every node MUST have 3 or 4 values: `(index,x,y)` or `(index,x,y,type)`.
+`(0,0)` = top-left (highest value), `(W,H)` = bottom-right (lowest). Every node MUST have 3 to 5 values: `(index,x,y)`, `(index,x,y,type)`, or `(index,x,y,type,cap)` (the 5th stroke-cap slot is covered under Full-fidelity networks below).
 
 ## Full-fidelity networks
 

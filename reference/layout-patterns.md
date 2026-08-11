@@ -21,7 +21,7 @@ gr s(200,200)                              ← group for free p(x,y) positioning
 Axes are physical, never flip with direction (`x`=horizontal, `y`=vertical). `sb` is main-axis only (`x(sb)` in `al(h)`, `y(sb)` in `al(v)`) and needs a non-`hug` parent with room to distribute. Bottom-center column → `y(e),x(c)`; right-center row → `x(e),y(c)`. Never make empty spacer frames, items right → `x(e)`, opposite edges → `x(sb)` (2 children), top+bottom → `y(sb)` (2 children, fixed/fill height).
 
 ## Grid patterns
-Row-aligned (table): `al(v,g(1))` → `al(h,g(0)) s(fill,hug)` rows → `s(fill,fill)` cells.
+Row-aligned (table): `al(v,g($spacing.none))` → `al(h,g($spacing.none)) s(fill,hug)` rows → `s(fill,fill)` cells. Hairline row rules come from a bottom-only stroke on each row (`st[($color.outline.variant,w($stroke.width.none,$stroke.width.none,$stroke.width.subtle,$stroke.width.none))]`), not a 1px gap: there is no 1px spacing token.
 Column-major (kanban): `al(h,g($spacing.md))` → `al(v,g($spacing.sm)) s(fill,fill)` columns.
 
 ## Group vs Frame vs Absolute

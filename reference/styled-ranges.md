@@ -15,7 +15,7 @@ t("Get started for free today",$font.family,$font.size.lg) f[($color.text.primar
 
 Use `$color.secondary` (the secondary brand callout role) when the highlighted word is a promotional / "look here" emphasis. Reach for palette stops (`$rose.firm`, `$emerald.mid`, `$violet.firm`) when the design specifically wants that hue, see the Key Patterns below for several variations.
 
-**Mods:** `b` bold · `i` italic · `u` underline · `w(N)` weight (`$font.weight.*`) · `s(N)` size (`$font.size.*`) · `f(family)` font · color (token `$ref` or `#hex`) · `o(N)` opacity (`$visibility.*`). In explicit mode `w()`, `s()`, and `o()` are tokenizable slots, use tokens, not bare numerics.
+**Mods:** `b` bold · `i` italic · `u` underline · `strike` strikethrough · `w(N)` weight (`$font.weight.*`) · `s(N)` size (`$font.size.*`) · `f(family)` font · color (token `$ref` or `#hex`) · `o(N)` opacity (`$visibility.*`) · `ls(N)` letter spacing (bare pixels). In explicit mode `w()`, `s()`, and `o()` are tokenizable slots, use tokens, not bare numerics.
 
 Color slots take tokens just like fills, accent words follow the active brand and mode the same way solid fills do. Reach for palette tokens (`$rose.mid`, `$emerald.mid`, `$violet.firm`) for hue accents and `$neutral.X` / `$slate.X` for typographic emphasis.
 

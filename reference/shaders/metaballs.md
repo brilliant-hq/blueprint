@@ -14,7 +14,7 @@ calmer), `speed(N)` energy. Colors are positional token args. Size and
 count are coupled, so pick a density:
 
 - **Detailed**: `size(0.2),count(15),speed(0.4)`, complex and textured.
-- **Balanced**: `size(0.5),count(7),speed(0.5)`, the default.
+- **Balanced**: `size(0.3),count(10),speed(1)`, the default.
 - **Organic**: `size(0.7),count(5),speed(0.35)`, calm and natural.
 - **Ambient**: `size(0.85),count(4),speed(0.3)`, meditative background.
 

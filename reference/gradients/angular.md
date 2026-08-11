@@ -12,9 +12,9 @@ Colors sweep around a center point (conic/sweep). Like a color wheel or light re
 
 ```
 (angular()), default: centered, black→white
-(angular(#start,#end)), two-color
-(angular(cx,cy,ax,ay,stop(#hex,pos),...)), full control
-(angular(cx,cy,ax,ay,w(wx,wy),stop(#hex,pos),...)), elliptical
+(angular($start,$end)), two-color
+(angular(cx,cy,ax,ay,stop($c,pos),...)), full control
+(angular(cx,cy,ax,ay,w(wx,wy),stop($c,pos),...)), elliptical
 ```
 
 Token-bound stops work the same as in linear/radial:

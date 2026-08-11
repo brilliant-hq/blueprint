@@ -22,7 +22,10 @@ al(h,pad($spacing.sm)) after(#logo) parent(#nav) "Search"
 
 #icon after(#label)
 -- on an existing element, after() reorders it to sit just after #label
--- (reparenting into #label's parent if needed)
+-- (reparenting into #label's parent if needed). before() mirrors it:
+-- `#icon before(#label)` reorders #icon to sit just BEFORE #label, likewise
+-- reparenting into #label's parent when they differ. Both work on existing
+-- elements and on new ones.
 
 #popular parent(#pricing)
 -- parent() reparents an existing element; its on-screen position holds

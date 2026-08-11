@@ -56,4 +56,10 @@ al(v,g($spacing.sm),pad($spacing.lg)) s(hug,hug) f[($color.surface.container)] r
 
 Reconfigure on canvas: `#row_2 at(accessory(toggle))`; `override()` on a non-slot child changes its existing props (locks that category vs master edits); new content needs a `slot`.
 
+Reconfigure a NESTED instance copy the same way, by its own id: when a set variant composes another instance (an atom inside a molecule), each outer-instance copy materializes its own copy of that nested instance with its own id. Retarget it with `<copyId> at(axis(value))` (look the id up with `lookup`). This is the right way to express per-use variant drift (e.g. one row's button is `primary`, the rest `secondary`) — reconfigure the nested copy, not a raw fill override on it.
+
 `override()` targets a master child, by the `#ref` assigned when the master was built, by a master-child id (any variant's works), or by exact child name, and lands on that instance's own copy. Give each new element its own fresh `#ref`; re-using a taken ref keeps the original binding.
+
+## Across canvases
+
+Masters are referenced BY NAME, unique per canvas — two blessed forms: `inst(Name)` on the same canvas, `inst(Name, canvas(path))` on another (`path` = the identifier you pass as the canvas in tool calls). In one pass a master's `#ref` also resolves across canvases (`inst(#toggle, canvas(Atoms)) "Wi-Fi"`); from an earlier session, use the name (`inst(Settings Row, canvas(Atoms))`). Quote a name that contains a comma, parens, or quotes — `inst("Card, small")`; simple multi-word names work either way, and names round-trip through save. The instance links to its cross-canvas master and follows edits; the canvas loads on demand (need not be open). Failures are loud, never silent: a wrong path or unknown master → "Component not found"; a name matching two masters → a refusal listing the candidates. Names stay unique because renaming a master onto a name another master already uses on that canvas is refused (you pick another). Full structure: `blueprint/libraries`.

@@ -4,7 +4,7 @@ dsl: [irid, spread, intensity, metallic]
 ---
 # Shader: Iridescent
 
-Iridescent liquid crystal, deep shifting colors with metallic surface tension. The default (Oil Slick) produces a dark, luxurious look. Supports 3 colors.
+Iridescent liquid crystal, deep shifting colors with metallic surface tension. A bare `irid()` paints a pale, near-white iridescent (light violet cast); pass a dark palette explicitly for the luxurious "Oil Slick" look. Supports 3 colors.
 
 ## Parameters
 
@@ -14,7 +14,7 @@ Iridescent liquid crystal, deep shifting colors with metallic surface tension. T
 
 Tailwind stops cover most recipes directly. Tuned ones get an `$art.*` extension on the active DS.
 
-- `irid()`: Oil Slick (default: deep purple/teal/violet)
+- `irid($purple.intense,$teal.mid,$violet.mid)`: Oil Slick (dark purple/teal/violet); the luxe look wants explicit dark colors, not bare `irid()`
 - `irid($indigo.intense,$orange.mid,$violet.mid)`: Deep Sapphire
 - `irid($zinc.intense,$emerald.mid,$cyan.mid)`: Dark Emerald
 - `irid($slate.intense,$indigo.mid,$purple.mid)`: Void Indigo

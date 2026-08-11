@@ -25,6 +25,7 @@ Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 - **Components**: `detach_component`, `reset_component_instance_overrides`, `push_overrides_to_master`, `go_to_master_component`
 - **Import**: `import_figma` (`{figmaUrl}`)
 - **Canvas**: `create_canvas` (`{fullPath}`), `get_canvases`, `rename_canvas`, `delete_canvas`, `duplicate_canvas`, `create_folder`, `delete_folder`, `create_structure`
+- **Open a file**: `open_file` (`{value: "<repo-relative path>"}`) opens that file as the active file, exactly like clicking it in the file explorer — `.bl` canvases open on the canvas, text/markdown files open in the editor; a bad path errors
 - **Background**: `set_background_color` (`{value}`), `toggle_background`, `toggle_whiteboard`, `toggle_blackboard`
 - **Appearance** (no `elementIds`): `toggle_dark_mode` flips the app between light and dark; `set_theme_follow_system` makes appearance track the OS setting
 - **Keybindings**: `list_keybindings`, `set_keybinding`
