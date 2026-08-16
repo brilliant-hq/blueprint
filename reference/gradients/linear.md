@@ -1,6 +1,6 @@
 ---
 assumes: blueprint/paint
-dsl: [linear, angle, multi-stop]
+dsl: [linear, angle, multi-stop, shear, skew]
 ---
 # Gradients: Linear
 
@@ -18,6 +18,21 @@ f[(linear(180,solid($primary.mid,o($visibility.mid)),$primary.intense))]  per-st
 **Angle**: `180` top to bottom, `0` bottom to top, `90` left to right,
 `135` the energizing diagonal. Token-bound stops follow brand and mode
 switches, same as a solid fill.
+
+## Shear (third handle)
+
+Add `w(wx,wy)` to skew the color bands off perpendicular, so the iso-lines
+run at an angle to the sweep direction instead of square across it. `wx,wy`
+place the shear handle in the same `0..1` space as linear's positional
+coords. Leave `w()` off for a plain perpendicular linear (the default,
+unchanged):
+
+```
+f[(linear(135,w(1,0),$violet.mid,$pink.mid))]
+```
+
+Reach for it to match an imported gradient whose bands are not square to its
+direction, or for a subtle skew on a large surface. Most linears want none.
 
 ## Multi-stop
 

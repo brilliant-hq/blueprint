@@ -17,6 +17,8 @@ f[(solid($color.secondary,o($visibility.mid)))]     role + opacity
 f[(linear(135,$violet.mid,$pink.mid))]              linear gradient
 f[(radial($color.surface,$color.on-surface))]       radial gradient
 f[(angular($amber.mid,$red.mid))]                   angular gradient
+f[(diamond($amber.mid,$red.mid))]                   diamond gradient (four-point rhombus)
+f[(linear(135,w(1,0),$violet.mid,$pink.mid))]       linear + shear (third handle)
 f[(metaballs($primary.soft,$primary.mid,$primary.bold))]  shader
 f[(dithering($neutral.intense,$cyan.mid,size(6)))]  shader (ordered dither)
 f[(reactiveGrid())]                                 shader (grid, cursor-reactive)
@@ -39,7 +41,11 @@ colors, effect colors); token-bound stops follow brand and mode. While a
 design system is active, bare hex in these slots is rejected: use a `$token`
 (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)). With no design system, use hex directly (a `$token` is what
 gets rejected then). Radial accepts placement:
-`radial(cx(25),cy(15),r(50),$primary.mid,$primary.intense)`.
+`radial(cx(25),cy(15),r(50),$primary.mid,$primary.intense)`. Diamond shares
+radial's geometry (`diamond(cx,cy,ex,ey,...)` or the shorthand above; it has no
+`cx()/cy()/r()` percentage form). Linear takes an optional `w(wx,wy)` third
+handle to shear/skew the sweep; leave it off for a plain perpendicular gradient.
+Full per-kind guidance lives in `blueprint/gradients/*`.
 
 ## Image filters
 

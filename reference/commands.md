@@ -32,6 +32,9 @@ Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 - **Provider keys**: `set_anthropic_api_key` and the `_openai_` / `_google_` / `_openrouter_` variants
 - **View toggles** (no `elementIds`): `toggle_pixel_grid`, `toggle_snap_to_pixel_grid`, `toggle_rulers`, `toggle_layout_grids`, `toggle_snap_guides`, `toggle_dimension_labels`, `toggle_presentation_mode`, `toggle_ui`
 - **Element toggle**: `toggle_constrain_proportions` (needs `elementIds`)
+- **Libraries** (no `canvasId`/`elementIds`; each answers with an honest verdict — server refusals verbatim):
+  - Producer (the open project must be synced to Brilliant cloud): `mark_project_as_library` / `unmark_project_as_library` flip the library flag (unmarking keeps existing releases resolvable); `create_library_release` (`{version?, notes?}`) checkpoints and binds a plain-semver version — omit `version` for latest-patch+1 (1.0.0 when none); `notes` becomes the changelog entry.
+  - Consumer (writes `libraries.yaml` at the project root): `add_library` (`{library: "@handle/project", version?}` — validates the library flag + the release; default = latest), `update_library` (same params; bumps the pin, default latest), `remove_library` (`{library}` — instances go missing-library loud, never stripped), `add_local_library` (`{libraryName, path}` — a local folder as a live-updating dependency, folder-backed sessions only).
 - **Suggest a setting**: `suggest_setting_change` (see below)
 
 ## Suggesting a configuration change
