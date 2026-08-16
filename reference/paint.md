@@ -35,8 +35,10 @@ tuned defaults; override any of `frost(N)` (backdrop blur), `thickness(N)`,
 stroke).
 
 Every color slot takes a `$token` (solid fills, gradient stops, shader
-colors, effect colors); token-bound stops follow brand and mode, and bare
-hex is rejected (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)). Radial accepts placement:
+colors, effect colors); token-bound stops follow brand and mode. While a
+design system is active, bare hex in these slots is rejected: use a `$token`
+(see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)). With no design system, use hex directly (a `$token` is what
+gets rejected then). Radial accepts placement:
 `radial(cx(25),cy(15),r(50),$primary.mid,$primary.intense)`.
 
 ## Image filters

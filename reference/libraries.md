@@ -28,13 +28,17 @@ parens, or quotes. The master canvas loads on demand, and master edits propagate
 to every instance everywhere. A name matching two masters refuses loudly listing
 the candidates. Full form and failure shapes: `blueprint/components`.
 
-## Safe today vs coming
+## Reorganizing masters across canvases
 
-Building a library and instancing it across canvases is solid today. What is
-NOT yet supported is REORGANIZING existing masters across canvases.
+You can relocate a master to another canvas with `parent(#master, canvas(path))`
+(the same target grammar as `inst(...)`, applied to the master itself). Every
+instance that referenced it follows automatically: the move re-points them,
+same-canvas instances become cross-canvas, and the whole relocation is one
+undoable step. If any consumer canvas cannot be updated, the move is refused and
+nothing changes, so you never end up with dangling references.
 
-WARNING: do not cut/paste a master from one canvas to another. It breaks every
-instance that referenced it (the reference does not follow the move). Decide a
-master's home canvas up front and build it there. If you truly must relocate
-one, rebuild the master on the target canvas and re-instance, rather than
-moving the original.
+Two refusals to know about:
+- Move the master ROOT itself. Moving a plain frame that merely CONTAINS a
+  master is refused, because it would strand the nested master's instances;
+  extract the master directly instead.
+- Do not pair the move with a delete of that master in the same call.
