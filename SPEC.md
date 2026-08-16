@@ -504,6 +504,7 @@ The table lists every property token, its grammar, the map key(s) it emits, and 
 | `hidden` | bare | `visible:false` | visible | flag |
 | `constrain` / `no-constrain` | bare | `constrainProportions` | false | flag |
 | `abs` / `no-abs` | bare | `isAbsolutePosition` | false | flag |
+| `pin(H,V)` | `H` in `l\|r\|c\|lr\|scale`, `V` in `t\|b\|c\|tb\|scale` | `hPin`,`vPin` | `l,t` (min/min) | per-axis skip on empty |
 | `front` / `front(N)`, `back` / `back(N)` | bare or N steps | z-order | n/a | reorder |
 | `tsm(mode)` | `auto`/`autoHeight`/`autoWidth`/`fixed` | text sizing mode | n/a | n/a |
 | `scaleTo(w\|h,N)`, `sw(N)`, `sh(N)` | axis + number | scale-to dimension | n/a | n/a |
@@ -526,6 +527,32 @@ Storage-dialect carriers `obb(...)`, `ext(...)`, `hug:N`, component tokens `axes
 NOTE: There is no fixed-size memo. An element's one size is its geometry, carried by `s(w,h)` (and, at storage, by `ext(...)` and `hug:N`). The retired `fixed(w,h)` token is accepted and ignored on read for backward compatibility, and is never emitted.
 
 NOTE (implementation): The `underline` bare flag emits a map key that differs from the `underlined` key produced inside `t(...)`. A bare `underline` written after a `t(...)` on the same line may not take effect. Prefer specifying underline inside `t(...)` (§9). This asymmetry is tracked as a defect and does not change the normative meaning of underline.
+
+### 6.1 Pin constraints
+
+`pin(H,V)` records how a child holds its place when its container is resized. It is a child property that lives beside `abs` in the child's property list and carries onto the child's `LayoutBehavior` (`hPin`, `vPin`).
+
+```
+Pin   ::= "pin(" HPin? "," VPin? ")"
+HPin  ::= "l" | "r" | "c" | "lr" | "scale"
+VPin  ::= "t" | "b" | "c" | "tb" | "scale"
+```
+
+Each axis carries one of five kinds. The horizontal letters are `l` (min), `r` (max), `c` (center), `lr` (stretch), and `scale`; the vertical letters are `t` (min), `b` (max), `c` (center), `tb` (stretch), and `scale`. The kinds determine the container-resize semantics:
+
+- **min** (`l` / `t`): keep the leading offset (the child's distance from the container's left or top edge).
+- **max** (`r` / `b`): keep the trailing offset (the distance from the right or bottom edge).
+- **center** (`c`): keep the child center's offset from the container center.
+- **stretch** (`lr` / `tb`): keep both edge offsets, so the child's size changes with the container.
+- **scale**: interpolate both edges proportionally to the container's size change.
+
+**Applicability.** Pins apply to a child whose container's box does not derive from its children: a frame, component, instance, or non-hug group. A hug group's box follows its children, so its children's pins are dormant until the group is resized (which makes it fixed and activates them). An auto-layout child has no pins because the flow owns its position, with one exception: an absolute-positioned child (`abs`) pins within the auto-layout frame. A top-level element has no container to resize against and therefore no pins.
+
+**Default and emit-lean.** The absent form is `pin(l,t)` (min on both axes), which reproduces the pre-pin anchoring behavior. Because `l,t` is the frozen default (Appendix B), it is elided: a child at the default never serializes a `pin(...)` token, and a document that uses no non-default pin is byte-identical to one written before pins existed. On import, a child's pins map verbatim from the source's constraints (Figma `LEFT_RIGHT` to stretch, `SCALE` to scale, `CENTER` to center, `RIGHT`/`BOTTOM` to max); import-size geometry is unchanged, because pins take effect only on a later resize.
+
+**Modify.** `pin(...)` follows the *empty positional equals skip* rule per axis (§15.1): `pin(,c)` changes only the vertical pin and preserves the horizontal one.
+
+**Misuse.** In the authoring lanes (create and modify), a `pin(...)` on an auto-layout child that is not `abs`, or on a group child (a group hugs its children, so its box has nothing to pin against), is a named non-fatal diagnostic in the class of §4.5: the pin token is dropped, the rest of the line still applies, and the message teaches the fix (add `abs`, or use a frame as the container), mirroring the forgiving treatment of `lh(...)` outside `t(...)`. Loading a stored document is exempt from this check: a dormant pin (on a hug-group child, or constraints imported onto a flow child) is legitimate state that activates later (a hug group resized to fixed, a flow child made `abs`), so it round-trips losslessly.
 
 ---
 
@@ -1008,7 +1035,7 @@ The pervasive rule is *empty positional equals skip*. There is no skip sentinel;
 
 ### 15.2 All-or-nothing tokens
 
-Multi-positional tokens that reject a partial-empty argument list are `pad(...)`, `flip(...)`, `skew(...)`, and the four-corner `rd(...)`; a partial-empty is a parse error. By contrast `p()` and `s()` skip per axis, and `o()`, `rot()`, and `rd(N)` skip the whole token when empty.
+Multi-positional tokens that reject a partial-empty argument list are `pad(...)`, `flip(...)`, `skew(...)`, and the four-corner `rd(...)`; a partial-empty is a parse error. By contrast `p()`, `s()`, and `pin()` skip per axis (`pin(,c)` keeps the horizontal pin and sets the vertical), and `o()`, `rot()`, and `rd(N)` skip the whole token when empty.
 
 ### 15.3 Relative deltas
 
@@ -1191,6 +1218,11 @@ Dir           ::= "h" | "v"
 AlArg         ::= "x(" Align ")" | "y(" Align ")" | "g(" Gap ")" | "pad(" Padding ")" | "wrap"
 Align         ::= "s" | "c" | "e" | "sb"
 
+(* Pin constraints *)
+Pin           ::= "pin(" HPin? "," VPin? ")"
+HPin          ::= "l" | "r" | "c" | "lr" | "scale"
+VPin          ::= "t" | "b" | "c" | "tb" | "scale"
+
 (* SVG / icon *)
 Svg           ::= "svg(" SvgArg ")"
 SvgArg        ::= InlineSvg | IconRef | UrlRef | PathRef
@@ -1272,6 +1304,7 @@ These are the `bp:v1` defaults on which canonical elision relies. They are froze
 | isLocked | false |
 | constrainProportions | false |
 | skew | 0.0 |
+| hPin / vPin | min / min (`pin(l,t)`, elided at default) |
 
 ### B.2 Parent (frame) defaults
 
@@ -1375,6 +1408,8 @@ Each row is a diagnostic code, its severity, category, the construct it applies 
 | B706 | error | property | component / list | mixed bare and operator items in `axes[...]` |
 | B707 | error | property | component | malformed rename (`old->` or `->new`) |
 | B708 | error | property | fills / strokes | mixed bare and operator items in `f[...]`/`st[...]` |
+
+Pin misuse (`pin(...)` on an auto-layout child without `abs`, or on a group child) carries no numbered code: it is a named non-fatal property diagnostic emitted by the parser's parent-context pass, specified in §6.1 (authoring lanes only; stored-document loads are exempt).
 
 Implementation notes on code collisions (tracked as defects; a future revision assigns disambiguated codes):
 

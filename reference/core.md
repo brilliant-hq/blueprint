@@ -29,6 +29,11 @@ squircle corners: `rd(12,smooth(0.6))`), `rot(N)`, `o(N)`, `clip`,
 default is pass-through; `no-isolate` clears it), `blend(mode)`,
 `flip(1,0)` (per-axis 1/0 flags: horizontal, vertical; both required, letters like `h`/`v` are a silent no-op), `front`/`back`,
 `abs` (frees a child from layout flow, position it with `p()`),
+`pin(H,V)` (how a child re-places when its container is resized, per axis:
+H `l|r|c|lr|scale`, V `t|b|c|tb|scale` = left/right/center/stretch/scale
+edge; default `pin(l,t)`; a slot left empty keeps that axis: `pin(,c)` sets
+only vertical; only valid on a plain-frame child, or an `abs` auto-layout
+child, never a flow child or a group child),
 `hidden` (invisible), `locked`, `constrain` (lock aspect ratio;
 `no-constrain` clears). `c` in
 `p()` centers: `p(c,c)`. Omit `p()` on top-level elements; they

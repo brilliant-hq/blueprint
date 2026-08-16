@@ -52,3 +52,20 @@ center one axis. Inside an `al()` a child must be `abs` for `p()` to
 apply; `abs` lifts it out of layout flow entirely (badges, dots,
 floating overlays) without affecting siblings or hug sizing. Inside a
 `fr` or `gr`, `p()` already positions children freely.
+
+**Pin** (`pin(h,v)`): how a child holds its place when the container is
+resized. Per axis five kinds: `l`/`t` hold the leading edge (min, the
+default), `r`/`b` hold the trailing edge (max), `c` holds the center,
+`lr`/`tb` hold both edges so the child stretches, and `scale`
+interpolates both edges proportionally. Absent is `pin(l,t)` (today's
+anchor-to-top-left), so it never serializes; an empty slot skips that
+axis (`pin(,c)` sets only the vertical). Write it beside `p()`. Pins
+apply to children of a `fr`, component, instance, or non-hug `gr`; a hug
+`gr` has none until you resize it (which fixes its size). Inside an
+`al()`, only an `abs` child takes a pin, and it pins within the frame:
+
+```
+r p(260,12) s(20,20) pin(r,t) "close button"
+r p(12,90) s(276,14) pin(lr,b) "bottom bar"
+al(v,g(8),pad(12)) abs p(16,16) pin(r,b) "floating badge"
+```
