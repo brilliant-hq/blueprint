@@ -15,7 +15,7 @@ t("Get started for free today",$font.family,$font.size.lg) f[($color.text.primar
 
 Use `$color.secondary` (the secondary brand callout role) when the highlighted word is a promotional / "look here" emphasis. Reach for palette stops (`$rose.firm`, `$emerald.mid`, `$violet.firm`) when the design specifically wants that hue, see the Key Patterns below for several variations.
 
-**Mods:** `b` bold · `i` italic · `u` underline · `strike` strikethrough · `w(N)` weight (`$font.weight.*`) · `s(N)` size (`$font.size.*`) · `f(family)` font · color (token `$ref`, `#hex`, or a full gradient spec, see Range paint below) · `o(N)` opacity (`$visibility.*`) · `ls(N)` letter spacing (bare pixels) · `link("url")` hyperlink. In explicit mode `w()`, `s()`, and `o()` are tokenizable slots, use tokens, not bare numerics.
+**Mods:** `b` bold · `i` italic · `u` underline · `strike` strikethrough · `w(name)` weight by name (`w(semibold)`, `w(medium)`; numeric weights like `w(600)` work only in `none` mode, and `$font.weight.*` tokens are not supported on a range) · `s(N)` size (bare pixels in every mode; `$font.size.*` tokens are not supported on a range) · `f(family)` font (literal name or `$font.family.*` token) · color (token `$ref`, `#hex`, or a full gradient spec, see Range paint below) · `o(N)` opacity (`$visibility.*` token; bare numerics only in `none` mode) · `ls(N)` letter spacing (bare pixels, `none` mode only) · `link("url")` hyperlink. In explicit mode the tokenizable span slots are color, `f()`, and `o()`; sizes stay bare pixels, weights stay names, and `ls()` is refused (letter spacing currently has no token form; use `none` mode when a design needs it).
 
 Color slots take tokens just like fills, accent words follow the active brand and mode the same way solid fills do. Reach for palette tokens (`$rose.mid`, `$emerald.mid`, `$violet.firm`) for hue accents and `$neutral.X` / `$slate.X` for typographic emphasis.
 
@@ -39,17 +39,17 @@ t("Read the docs to get started",$font.family,$font.size.sm) f[($color.text.seco
 
 Only solids and gradients are available on a substring; shader and image fills stay whole-element only.
 
-**Where each renders.** Gradient ranges and links both render on the canvas. On export a link becomes a real anchor in HTML (`<a href>`) and SVG (`<a xlink:href>`), while PDF and the raster formats (PNG/JPEG/WebP) cannot carry a link, so linked text exports as ordinary styled text. A gradient range renders in the raster formats (which read back the live canvas) but the SVG, PDF, and HTML lanes fall back to that range's base text color.
+**Where each renders.** Gradient ranges and links both render on the canvas. A gradient range now exports at full fidelity in every lane: the raster formats (PNG/JPEG/WebP) read back the live canvas, SVG and PDF outline just the gradient glyphs to vector paths filled with the gradient (Figma's move) while the rest of the text stays real text, and HTML/React paint the span with `background-clip:text`. On export a link becomes a real anchor in HTML (`<a href>`) and SVG (`<a xlink:href>`), while PDF and the raster formats do not carry a link (the PDF exporter draws glyphs, not link annotations), so linked text exports as ordinary styled text.
 
 ## Key Patterns
 
 ```
 t("Build something amazing",$font.family,$font.size.4xl,b) f[($stone.intense)]
-  spans[("amazing",s($font.size.5xl),f(Bungee Shade),$orange.mid)]
+  spans[("amazing",s(48),f(Bungee Shade),$orange.mid)]
 t("$49/month",$font.family,$font.size.sm) f[($neutral.intense)]
-  spans[("$49",s($font.size.3xl),b,$emerald.mid),("/month",$slate.mid)]
+  spans[("$49",s(36),b,$emerald.mid),("/month",$slate.mid)]
 t("2,847 users",$font.family,$font.size.2xl,b) f[($neutral.intense)]
-  spans[("users",w($font.weight.firm),s($font.size.md),$slate.mid)]
+  spans[("users",w(semibold),s(16),$slate.mid)]
 t("The art of modern design",Lora,$font.size.4xl,b) f[($stone.intense)]
   spans[("art",f(Nothing You Could Do),$violet.firm),("modern design",f(Inter),$neutral.intense)]
 t("Run npm install to get started",$font.family,$font.size.sm) f[($slate.bold)]
