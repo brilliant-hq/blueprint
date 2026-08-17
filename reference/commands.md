@@ -13,6 +13,8 @@ group/ungroup, and reparenting are all DSL operations, never commands.
 { "canvasId": "...", "commands": [{ "commandId": "...", "elementIds": [...], "params": {...} }] }
 ```
 
+A canvas that failed to load refuses every mutating command with an error naming the canvas (its saves are blocked, so edits there would be lost). Read-only commands like `copy` still work, and `delete_canvas` stays available so a corrupt canvas can be removed.
+
 Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 
 ## Commands
@@ -35,6 +37,9 @@ Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 - **Libraries** (no `canvasId`/`elementIds`; each answers with an honest verdict — server refusals verbatim):
   - Producer (the open project must be synced to Brilliant cloud): `mark_project_as_library` / `unmark_project_as_library` flip the library flag (unmarking keeps existing releases resolvable); `create_library_release` (`{version?, notes?}`) checkpoints and binds a plain-semver version — omit `version` for latest-patch+1 (1.0.0 when none); `notes` becomes the changelog entry.
   - Consumer (writes `libraries.yaml` at the project root): `add_library` (`{library: "@handle/project", version?}` — validates the library flag + the release; default = latest), `update_library` (same params; bumps the pin, default latest), `remove_library` (`{library}` — instances go missing-library loud, never stripped), `add_local_library` (`{libraryName, path}` — a local folder as a live-updating dependency, folder-backed sessions only).
+- **Cover** (the one image a project presents itself with, on its tile and cards — load `design/covers` before designing one; each answers with an honest verdict):
+  - `set_project_cover` (`{canvasId, elementId?}` — `canvasId` is required and names the canvas the cover lives on; `elementId` names a FRAME on it, and omitting it uses the whole canvas). Replaces any existing cover: there is one cover per project.
+  - `remove_project_cover` (no params) — the project falls back to its canvas mosaic.
 - **Suggest a setting**: `suggest_setting_change` (see below)
 
 ## Suggesting a configuration change

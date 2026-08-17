@@ -1,6 +1,6 @@
 ---
 assumes: blueprint/text
-dsl: [span, spans, styled-range]
+dsl: [span, spans, styled-range, link]
 ---
 # Blueprint Styled Ranges
 
@@ -15,11 +15,31 @@ t("Get started for free today",$font.family,$font.size.lg) f[($color.text.primar
 
 Use `$color.secondary` (the secondary brand callout role) when the highlighted word is a promotional / "look here" emphasis. Reach for palette stops (`$rose.firm`, `$emerald.mid`, `$violet.firm`) when the design specifically wants that hue, see the Key Patterns below for several variations.
 
-**Mods:** `b` bold · `i` italic · `u` underline · `strike` strikethrough · `w(N)` weight (`$font.weight.*`) · `s(N)` size (`$font.size.*`) · `f(family)` font · color (token `$ref` or `#hex`) · `o(N)` opacity (`$visibility.*`) · `ls(N)` letter spacing (bare pixels). In explicit mode `w()`, `s()`, and `o()` are tokenizable slots, use tokens, not bare numerics.
+**Mods:** `b` bold · `i` italic · `u` underline · `strike` strikethrough · `w(N)` weight (`$font.weight.*`) · `s(N)` size (`$font.size.*`) · `f(family)` font · color (token `$ref`, `#hex`, or a full gradient spec, see Range paint below) · `o(N)` opacity (`$visibility.*`) · `ls(N)` letter spacing (bare pixels) · `link("url")` hyperlink. In explicit mode `w()`, `s()`, and `o()` are tokenizable slots, use tokens, not bare numerics.
 
 Color slots take tokens just like fills, accent words follow the active brand and mode the same way solid fills do. Reach for palette tokens (`$rose.mid`, `$emerald.mid`, `$violet.firm`) for hue accents and `$neutral.X` / `$slate.X` for typographic emphasis.
 
 **Duplicate words:** Add 0-based occurrence index, `("the",0,b),("the",1,i)`
+
+## Range paint: gradients and links
+
+The span color slot takes the same nested paint spec a fill or stroke does, so a range can carry a gradient, not just a solid: `linear(...)`, `radial(...)`, `angular(...)`, `diamond(...)` all work in place of a `$ref`/`#hex` color (full syntax in `blueprint/paint`). A range gradient is framed by the WHOLE text box, so the range shows the slice of one continuous gradient spanning the text (the same handles a fill gradient uses).
+
+```
+t("50% OFF EVERYTHING",$font.family,$font.size.4xl,b) f[($neutral.intense)]
+  spans[("50% OFF",linear(90,$rose.mid,$amber.mid))]
+```
+
+`link("url")` turns a range into a hyperlink. The URL is always quoted (`link("https://brilliant.design")`). A link is pure data: it does NOT restyle the glyphs, so add `u` and a color yourself if you want the classic underlined-link look.
+
+```
+t("Read the docs to get started",$font.family,$font.size.sm) f[($color.text.secondary)]
+  spans[("docs",u,link("https://brilliant.design/docs"))]
+```
+
+Only solids and gradients are available on a substring; shader and image fills stay whole-element only.
+
+**Where each renders.** Gradient ranges and links both render on the canvas. On export a link becomes a real anchor in HTML (`<a href>`) and SVG (`<a xlink:href>`), while PDF and the raster formats (PNG/JPEG/WebP) cannot carry a link, so linked text exports as ordinary styled text. A gradient range renders in the raster formats (which read back the live canvas) but the SVG, PDF, and HTML lanes fall back to that range's base text color.
 
 ## Key Patterns
 

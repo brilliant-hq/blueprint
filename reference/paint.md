@@ -1,6 +1,6 @@
 ---
 assumes: blueprint/core
-dsl: [solid, metaballs, metal, irid, steel, dithering, reactiveGrid, glass, colorAdjust, noiseGrain, halftone, pixelate, duotone, posterize, dither]
+dsl: [solid, metaballs, metal, irid, steel, dithering, glass, colorAdjust, noiseGrain, halftone, pixelate, duotone, posterize, dither]
 ---
 # Blueprint Paint
 
@@ -21,7 +21,6 @@ f[(diamond($amber.mid,$red.mid))]                   diamond gradient (four-point
 f[(linear(135,w(1,0),$violet.mid,$pink.mid))]       linear + shear (third handle)
 f[(metaballs($primary.soft,$primary.mid,$primary.bold))]  shader
 f[(dithering($neutral.intense,$cyan.mid,size(6)))]  shader (ordered dither)
-f[(reactiveGrid())]                                 shader (grid, cursor-reactive)
 f[(img(https://picsum.photos/id/42/800/400))]       image
 f[(img(...)),(halftone(dotSize(8),mode(cmyk)))]     image filter over the fill below
 f[(glass)]                                          liquid glass (defaults)

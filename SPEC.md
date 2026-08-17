@@ -584,7 +584,7 @@ A fill spec is dispatched by shape:
 - **Shaders.** `metaballs`, `metal`/`liquidMetal`, `irid`/`holo`, `steel`, and related keywords, with bare defaults per type, token-bindable colors, a `frozen` flag to disable animation, and reserved named parameters (`scale`, `uvx`, `uvy`, `uvrot`, `opacity`, `aspect`, `shape(...)`).
 - **Glass.** `glass` / `glass(...)` is a liquid-glass fill with clamped parameters (`frost`, `thickness`, `bevel`, `ior`, `chroma`, `glow`, `edge`, `sat`, `angle`, `gather`, `mag`, `tint`). Glass is fill-only; a glass spec in a stroke is a diagnostic (Appendix C, B307).
 - **Effect fills.** `inner(...)` (inner shadow), `glow(...)` (inner glow), and `blur(...)` (background blur, default radius 8) are *fills*, not element-level effects. They live in the fill stack.
-- **Image filters.** A `filter(name,...)` wrapper and the named filters `colorAdjust`, `noiseGrain`, `halftone`, `pixelate`, `duotone`, `posterize`, `dither`, plus the shader filters `dithering` and `reactiveGrid`, are matched case-insensitively and forgivingly.
+- **Image filters.** A `filter(name,...)` wrapper and the named filters `colorAdjust`, `noiseGrain`, `halftone`, `pixelate`, `duotone`, `posterize`, `dither`, plus the shader filter `dithering`, are matched case-insensitively and forgivingly.
 
 An unrecognized spec falls back to a solid color built from the spec string; the validator catches the common mistake of a keyword-with-parentheses that is not a known fill kind (B305).
 

@@ -4,7 +4,7 @@ dsl: [uv, frozen]
 ---
 # Shaders Overview
 
-Six shaders, each a physical surface or pattern rather than an abstract
+Five shaders, each a physical surface or pattern rather than an abstract
 effect.
 
 | Shader | Looks like |
@@ -14,7 +14,6 @@ effect.
 | `irid()` | deep iridescent liquid crystal, shifting color bands |
 | `steel()` | flowing mercury, smooth and reflective |
 | `dithering()` | animated ordered-dither field, retro two-tone stipple |
-| `reactiveGrid()` | glowing grid that warps toward the cursor when hovered |
 
 ## Never put text on a shader
 
@@ -37,8 +36,7 @@ strokes, `scale(2-4)` shows more detail than `scale(1)`. Keep `speed` slow
 on backgrounds, faster on strokes.
 
 `dithering()` adds `size(N)` (dot scale) and numeric `shape(0-6)` /
-`ditherType(0-3)`. `reactiveGrid()` adds `density(N)`, `distortion(N)`,
-`radius(N)`; it warps toward the cursor in the live app only.
+`ditherType(0-3)`.
 
 ## Colors and strokes
 
