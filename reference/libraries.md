@@ -1,7 +1,9 @@
 ---
 assumes: blueprint/components
 ---
-# Component Libraries (multi-canvas projects)
+# Multi-Canvas Structure
+
+How to organize component masters across canvases within one project. (A **library** is something else in Brilliant: another project's components consumed at a pinned version, referenced with `lib()`. See `reference/libraries` for that, and `blueprint/components` for the `lib()` form.)
 
 Treat a big project like a codebase. Each canvas is a module, its components
 are that module's exports, and a component reference is the API between
@@ -14,13 +16,14 @@ canvases. Split by layer so a screen never redefines a primitive:
 
 Give each layer its own canvas (or a folder of canvases) and name it for the
 layer. Masters live once, on the canvas they belong to; everything else
-instances them.
+instances them. This layout is also what makes a project worth publishing as
+a library later: consumers browse its components grouped by canvas.
 
 ## Consume across canvases
 
 `inst(Name, canvas(path))` places an instance of a master on another canvas;
 `inst(Name)` does it on the same one. Names ARE the reference, unique per canvas
-(enforced — renaming a master onto a name another master already uses is
+(enforced: renaming a master onto a name another master already uses is
 refused), so a name is unambiguous. In one authoring pass a `#ref` also resolves
 across canvases (`inst(#toggle, canvas(Atoms))`); from an earlier session, use
 the name (`inst(Settings Row, canvas(Atoms))`). Quote a name with a comma,

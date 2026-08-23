@@ -17,6 +17,8 @@ A canvas that failed to load refuses every mutating command with an error naming
 
 Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 
+Element-operation commands act only on the `elementIds` (or `parts`) you pass: they never read the app's live selection. An id-less call to a target-requiring command (selection, alignment, text alignment, visibility/lock, add/remove stroke or fill), or a target id placed in `params` instead of `elementIds`, is refused with an error naming the expected key, never a silent success. `set_stroke_dash` on an element that has no stroke likewise refuses (add a stroke first).
+
 ## Commands
 
 - **Selection**: `select_elements`, `deselect_all`
@@ -31,7 +33,7 @@ Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 - **Background**: `set_background_color` (`{value}`), `toggle_background`, `toggle_whiteboard`, `toggle_blackboard`
 - **Appearance** (no `elementIds`): `toggle_dark_mode` flips the app between light and dark; `set_theme_follow_system` makes appearance track the OS setting
 - **Keybindings**: `list_keybindings`, `set_keybinding`
-- **Provider keys**: `set_anthropic_api_key` and the `_openai_` / `_google_` / `_openrouter_` variants
+- **Provider keys**: `set_anthropic_api_key` and the `_openai_` / `_google_` / `_openrouter_` variants. Storing a FRESH key succeeds directly. Overwriting an EXISTING key shows the user an in-app confirmation card and returns without storing; if the user approves, the result message tells you to call the same command again (that one follow-up call stores the key), and if they decline the existing key is kept. You cannot approve on the user's behalf.
 - **View toggles** (no `elementIds`): `toggle_pixel_grid`, `toggle_snap_to_pixel_grid`, `toggle_rulers`, `toggle_layout_grids`, `toggle_snap_guides`, `toggle_dimension_labels`, `toggle_presentation_mode`, `toggle_ui`
 - **Element toggle**: `toggle_constrain_proportions` (needs `elementIds`)
 - **Libraries** (no `canvasId`/`elementIds`; each answers with an honest verdict — server refusals verbatim):

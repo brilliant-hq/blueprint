@@ -691,7 +691,7 @@ An empty first slot skips (preserves on modify; on create it is an error, B204).
 
 ### 9.4 Styled runs (`spans[...]`)
 
-A `spans[...]` continuation line, indented under a text element, applies per-run styling. Each range is either a substring match (`"substring"[,occurrence],mods`) or a numeric range (`start,end,mods`). Mods include `b`/`i`/`u`/`strike`, `ls(N)`, `w(...)`, `s(N)`, `f(...)`, `o(N|$tok)`, `#hex`, `$tok`, and `tok(name,#hex)`.
+A `spans[...]` continuation line, indented under a text element, applies per-run styling. Each range is either a substring match (`"substring"[,occurrence],mods`) or a numeric range (`start,end,mods`). Mods include `b`/`i`/`u`/`strike`, `ls(N)`, `w(...)`, `s(N)`, `f(...)`, `o(N|$tok)`, `#hex`, `$tok`, and `tok(name,#hex)`. Two more mods complete the set: `link("url")` makes the run a hyperlink (quote the URL; a bare unquoted URL is accepted only when it contains no comma, since an unquoted comma is ambiguous under the comma-delimited span grammar and is refused rather than mis-parsed), and a gradient paint form (`linear(...)`, `radial(...)`, `angular(...)`, `diamond(...)`) paints the run with the full nested gradient spec, exactly the same forms the fill and stroke slots accept.
 
 Example (validated, sovereign):
 
@@ -937,7 +937,9 @@ ValueOp   ::= "+" | "-" | Label "->" NewLabel
 Sep       ::= "," | " "                    (* axes tolerate spaces between them *)
 Variant   ::= "variant(" AxisVal ( "," AxisVal )* ")"
 AxisVal   ::= AxisName "(" ValueLabel ")"
-Inst      ::= "inst(" Ref ( "," "canvas(" Path ")" )? EmbedExtras? ")"
+Inst      ::= "inst(" Ref ( "," LibRef )? ( "," "canvas(" Path ")" )? ( "," "projds" )? EmbedExtras? ")"
+LibRef    ::= "lib(" LibName ")"
+LibName   ::= "@" Handle "/" ProjectName | LocalKey
 At        ::= "at(" AxisVal ( "," AxisVal )* ")"
 ```
 
@@ -945,6 +947,9 @@ At        ::= "at(" AxisVal ( "," AxisVal )* ")"
 - `axes[...]` (and its alias `props[...]`) declares axes and values. Both forms parse identically. Axis lists tolerate commas or spaces between axes; value lists are comma-separated. Names and labels MAY be quoted.
 - `variant(...)` on a set child records the child's coordinate.
 - `inst(ref)` places an instance; `canvas(path)` targets a cross-canvas master; the embedded extras (`emb`, plus an optional parent spec) are the self-contained storage form (§13.6).
+- `lib(...)` names a **library** the project depends on (declared in `libraries.yaml`): `@handle/project` for a published library, or the bare local manifest key (lowercase letters, digits, hyphens) for a `path:` entry. With `lib()`, `canvas(path)` is the master's canvas path INSIDE the library. Validation: `lib()` outside an `inst()` line is an error (B710), a malformed library name is an error (B711), and `lib()` without an explicit `canvas()` is an error (B712, there is no library-root default).
+- `projds` opts the instance out of the library's design system: without it a library instance's subtree resolves tokens against the library's own cascade; with it, against the consuming project's. It is meaningful only alongside `lib()`.
+- The parser accepts these arguments in any order after `ref`; the canonical emitted order is `lib`, `canvas`, `projds`, then the embedded extras.
 - `at(...)` sets an instance configuration on an `inst()` line or a modify line targeting an instance.
 
 ### 13.3 Default configuration
@@ -974,7 +979,7 @@ NOTE: `ov[...]` and `mref(...)` category lists are parsed as free-form strings a
 
 ### 13.6 Cross-canvas and embedded instances
 
-An instance whose master is on another canvas is placed by `inst(ref,canvas(path))`, and its configuration is stored by name (self-contained). In canonical storage, a cross-canvas instance is always the **embedded** form: `inst(ref,canvas(path),emb,parentSpec)` with `at(...)` and `ov[...]` suffixes, and each descendant carrying `mref(masterChildRef[,category...])`. The embedded form self-contains the instance subtree; it is the storage mitigation for master-absent, cross-canvas, and vector-override cases (§17.3).
+An instance whose master is on another canvas is placed by `inst(ref,canvas(path))`, and its configuration is stored by name (self-contained). An instance whose master lives in a **library** is placed by `inst(ref,lib(@handle/project),canvas(path))` with a library-relative canvas path (see §13.2). In canonical storage, a cross-canvas or library instance is always the **embedded** form: `inst(ref[,lib(name)],canvas(path)[,projds],emb,parentSpec)` with `at(...)` and `ov[...]` suffixes, and each descendant carrying `mref(masterChildRef[,category...])`; for a library instance `canvas(path)` is always emitted. The embedded form self-contains the instance subtree; it is the storage mitigation for master-absent, cross-canvas, library, and vector-override cases (§17.3).
 
 ### 13.7 Worked examples
 
@@ -1211,6 +1216,12 @@ SizeVal       ::= Num | "hug" | "fill" | "fill:" Num | "hug:" Num
 (* Text *)
 Text          ::= "t(" Content ( "," Family )? ( "," SizeArg )? ( "," Extra )* ")"
 Spans         ::= "spans[" SpanRange ( "," SpanRange )* "]"
+SpanRange     ::= ( String ( "," Int )? | Int "," Int ) ( "," SpanMod )*
+SpanMod       ::= "b" | "i" | "u" | "strike" | "ls(" Num ")" | "w(" WeightWord ")"
+              | "s(" Num ")" | "f(" Family ")" | "o(" Number ( ":$" TokenPath )? ")"
+              | HexColor | "$" TokenPath | "tok(" Name "," HexColor ")"
+              | "link(" ( String | BareUrl ) ")"
+              | ( "linear(" | "radial(" | "angular(" | "diamond(" ) GradientArgs ")"
 
 (* Auto layout *)
 AutoLayout    ::= "al(" Dir? AlArg* ")"
@@ -1258,7 +1269,9 @@ AxesDecl      ::= ( "axes[" | "props[" ) Axis ( Sep Axis )* "]"
 Axis          ::= AxisOp? AxisName ( "[" Values? "]" )?
 AxisOp        ::= "+" | "-" | AxisName "->" NewName
 Variant       ::= "variant(" AxisVal ( "," AxisVal )* ")"
-Inst          ::= "inst(" Ref ( "," "canvas(" Path ")" )? EmbedExtras? ")"
+Inst          ::= "inst(" Ref ( "," LibRef )? ( "," "canvas(" Path ")" )? ( "," "projds" )? EmbedExtras? ")"
+LibRef        ::= "lib(" LibName ")"
+LibName       ::= "@" Handle "/" ProjectName | LocalKey
 At            ::= "at(" AxisVal ( "," AxisVal )* ")"
 Mref          ::= "mref(" Ref ( "," Category )* ")"
 Ov            ::= "ov[" Category ( "," Category )* "]"
@@ -1283,7 +1296,7 @@ Ref           ::= "#" ( HexId | SessionRef )
 NumericTagged ::= Num ":" "$" TokenPath
 ```
 
-Terminal classes `Num`, `Int`, `String`, `Name`, `TokenPath`, `Label`, `Mode`, `Category`, `SvgPath`, and `Path` are the obvious lexical categories: `Num` a decimal, `Int` a non-negative integer, `String` a double-quoted string with the escapes of §3.4, `TokenPath` a dotted token name, and so on.
+Terminal classes `Num`, `Int`, `String`, `Name`, `TokenPath`, `Label`, `Mode`, `Category`, `SvgPath`, and `Path` are the obvious lexical categories: `Num` a decimal, `Int` a non-negative integer, `String` a double-quoted string with the escapes of §3.4, `TokenPath` a dotted token name, and so on. `Handle` and `ProjectName` are the platform's account-handle and project-name rules (as in a `brilliant.design/{handle}/{project}` address), and `LocalKey` is a bare local-library manifest key: lowercase letters, digits, and hyphens. `HexColor` is a `#`-prefixed hex color, `BareUrl` an unquoted comma-free URL (span `link()`), and `GradientArgs` the same gradient argument forms a fill accepts (section 7).
 
 ---
 

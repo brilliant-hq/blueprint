@@ -1,6 +1,6 @@
 ---
 assumes: blueprint/core, blueprint/layout
-dsl: [comp, inst, axes, variant, at, override, slot]
+dsl: [comp, inst, axes, variant, at, override, slot, lib, projds]
 ---
 # Blueprint Components
 
@@ -8,7 +8,7 @@ Two types of components, pick by what varies:
 
 |           | degenerate                              | set                                          |
 |-----------|-----------------------------------------|----------------------------------------------|
-| mindset   | DRY                                     | library                                      |
+| mindset   | DRY                                     | catalog                                      |
 | use when  | same shape, only content differs        | discrete states |
 | placement | *inline*, first-as-master                 | *outside*, first-as-instance |
 | build     | mark the first `comp`, `inst()` the rest, `override()` content | `comp … axes[state[…]]`, a `variant()` per state, then `inst() at(state(…))` |
@@ -62,4 +62,14 @@ Reconfigure a NESTED instance copy the same way, by its own id: when a set varia
 
 ## Across canvases
 
-Masters are referenced BY NAME, unique per canvas — two blessed forms: `inst(Name)` on the same canvas, `inst(Name, canvas(path))` on another (`path` = the identifier you pass as the canvas in tool calls). In one pass a master's `#ref` also resolves across canvases (`inst(#toggle, canvas(Atoms)) "Wi-Fi"`); from an earlier session, use the name (`inst(Settings Row, canvas(Atoms))`). Quote a name that contains a comma, parens, or quotes — `inst("Card, small")`; simple multi-word names work either way, and names round-trip through save. The instance links to its cross-canvas master and follows edits; the canvas loads on demand (need not be open). Failures are loud, never silent: a wrong path or unknown master → "Component not found"; a name matching two masters → a refusal listing the candidates. Names stay unique because renaming a master onto a name another master already uses on that canvas is refused (you pick another). Full structure: `blueprint/libraries`.
+Masters are referenced BY NAME, unique per canvas, in two blessed forms: `inst(Name)` on the same canvas, `inst(Name, canvas(path))` on another (`path` = the identifier you pass as the canvas in tool calls). In one pass a master's `#ref` also resolves across canvases (`inst(#toggle, canvas(Atoms)) "Wi-Fi"`); from an earlier session, use the name (`inst(Settings Row, canvas(Atoms))`). Quote a name that contains a comma, parens, or quotes, like `inst("Card, small")`; simple multi-word names work either way, and names round-trip through save. The instance links to its cross-canvas master and follows edits; the canvas loads on demand (need not be open). Failures are loud, never silent: a wrong path or unknown master → "Component not found"; a name matching two masters → a refusal listing the candidates. Names stay unique because renaming a master onto a name another master already uses on that canvas is refused (you pick another). How to organize masters across canvases: `blueprint/libraries` (multi-canvas structure).
+
+## From a library
+
+A project can also instance components from a **library**: another published project the current one depends on at a pinned version (declared in `libraries.yaml` at the project root). Add `lib()` with the library's handle, and make `canvas()` the canvas path inside the library:
+
+```
+inst(Button, lib(@acme/design-kit), canvas(Atoms/Buttons))
+```
+
+A local folder library uses its manifest key instead of a handle: `inst(Button, lib(my-kit), canvas(Atoms/Buttons))`. Everything else is a normal instance: `at()` picks a variant, `override()` and slots work as usual, and overrides survive library updates. Library content is read-only from the consuming project, so master edits happen in the library project itself. A library instance renders with the library's own design system by default; add the `projds` token on the instance line to re-theme it with the consuming project's tokens. Adding libraries, updates, and everything else: `reference/libraries`.
