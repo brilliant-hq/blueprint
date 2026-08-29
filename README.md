@@ -147,7 +147,9 @@ NOTE: The `bp:v` stamp is a claim about framing, not proof of content. On decode
 
 ### 2.2 Frontmatter
 
-Between the version stamp and the separator is a YAML map carrying canvas-level state. The canvas scalars live under a top-level `canvas:` key; the recognized scalars are `background` / `backgroundColor`, `backgroundEnabled`, `blackboardColor`, `rulerGuides`, and `designSystem`. The frontmatter MAY be empty. A `version:` key, if present in legacy input, is dropped on canonical encode because the `bp:v` stamp is the version of record.
+Between the version stamp and the separator is a YAML map carrying canvas-level state. The canvas scalars live under a top-level `canvas:` key; the recognized scalars are `background` / `backgroundColor`, `backgroundEnabled`, `gen`, `blackboardColor`, `rulerGuides`, and `designSystem`. The frontmatter MAY be empty. A `version:` key, if present in legacy input, is dropped on canonical encode because the `bp:v` stamp is the version of record.
+
+`gen` is an optional non-negative integer recording the project generation this file's derived content (component instances) was last brought up to date with. It is written immediately after `backgroundEnabled` and is OMITTED entirely when the canvas carries no derived content, so a project without components never grows the key. An absent or malformed `gen` reads as "unstamped", which simply means every reference is re-checked on open; it is never an error. Readers MUST ignore unrecognized keys under `canvas:` rather than refusing the document, which is how `gen` was added without a grammar version bump.
 
 ### 2.3 Separator and body
 

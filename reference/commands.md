@@ -17,13 +17,17 @@ A canvas that failed to load refuses every mutating command with an error naming
 
 Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
 
-Element-operation commands act only on the `elementIds` (or `parts`) you pass: they never read the app's live selection. An id-less call to a target-requiring command (selection, alignment, text alignment, visibility/lock, add/remove stroke or fill), or a target id placed in `params` instead of `elementIds`, is refused with an error naming the expected key, never a silent success. `set_stroke_dash` on an element that has no stroke likewise refuses (add a stroke first).
+Element-operation commands act only on the `elementIds` (or `parts`) you pass: they never read the app's live selection. **An element command called with no targets is refused, never silently succeeded**: if it cannot name an element it cannot change anything, so it says so instead of reporting success. Only commands that genuinely take no target run id-less (canvas background and board, `clear_elements`, undo/redo/paste, view and tool toggles, zoom, canvas/folder management, design-system and library acts). `set_stroke_dash` on an element that has no stroke likewise refuses (add a stroke first).
+
+`elementIds` belongs on the command, as shown above. If you put the same key beside `canvasId` (it then applies to every command that names none of its own) or inside `params`, it is still read. A target id under a DIFFERENT key, like `params.value`, is refused with an error naming the key to use: it is never guessed at.
+
+**Params are read, never guessed or defaulted.** A param key a command cannot consume is refused by name, and the error names the keys it does read: `move_elements {deltaX, deltaY}` is refused rather than applied as a move of zero (it takes `{dx, dy}`; `skew_elements` takes `{skewX, skewY}`). A missing REQUIRED param is refused the same way, so a call that would change nothing never comes back green. Naming one axis is fine, the other stays zero.
 
 ## Commands
 
 - **Selection**: `select_elements`, `deselect_all`
-- **Align** (2+): `align_left/right/top/bottom`, `align_horizontally`, `align_vertically`, plus `center_horizontally` / `center_vertically` (center on canvas)
-- **Distribute** (3+): `distribute_horizontally`, `distribute_vertically`
+- **Align** (2+): `align_left/right/top/bottom`, `align_horizontally`, `align_vertically`, plus `center_horizontally` / `center_vertically`. Align moves the targets onto the bounds they SHARE, so it needs 2 or more elements with the same parent: aimed at a single element it refuses (there is nothing to align to) and points at the centering command for that axis. To place ONE element relative to its parent use `center_horizontally` / `center_vertically`, or set the position outright (`p(x,y)` in the Blueprint DSL). Centering an element that lives **inside a frame** centers it within that frame, on any canvas. Centering a **top-level** element centers it in the visible viewport, which exists only for the canvas currently on screen: aimed at any other canvas it refuses and says so, so give top-level elements an explicit position instead (`move_elements {dx, dy}`, or `p(x,y)` in the Blueprint DSL).
+- **Distribute** (3+): `distribute_horizontally`, `distribute_vertically`. Below 3 targets in one parent, or with the elements already packed edge to edge, it refuses and says which: it never reports success over a canvas it could not change.
 - **Boolean**: `boolean_union`, `boolean_subtract`, `boolean_intersect`, `boolean_exclude`
 - **Mask**: `use_mask` builds a clipping mask from the selection
 - **Components**: `detach_component`, `reset_component_instance_overrides`, `push_overrides_to_master`, `go_to_master_component`
