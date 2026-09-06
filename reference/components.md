@@ -66,10 +66,10 @@ Masters are referenced BY NAME, unique per canvas, in two blessed forms: `inst(N
 
 ## From a library
 
-A project can also instance components from a **library**: another published project the current one depends on at a pinned version (declared in `libraries.yaml` at the project root). Add `lib()` with the library's handle, and make `canvas()` the canvas path inside the library:
+A project can also instance components from a **library**: another published project the current one depends on at a pinned version (declared in `libraries.yaml` at the project root). Add `lib()` with the library's `handle/project` (no `@`), and make `canvas()` the canvas path inside the library:
 
 ```
-inst(Button, lib(@acme/design-kit), canvas(Atoms/Buttons))
+inst(Button, lib(acme/design-kit), canvas(Atoms/Buttons))
 ```
 
-A local folder library uses its manifest key instead of a handle: `inst(Button, lib(my-kit), canvas(Atoms/Buttons))`. Everything else is a normal instance: `at()` picks a variant, `override()` and slots work as usual, and overrides survive library updates. Library content is read-only from the consuming project, so master edits happen in the library project itself. A library instance renders with the library's own design system by default; add the `projds` token on the instance line to re-theme it with the consuming project's tokens. Adding libraries, updates, and everything else: `reference/libraries`.
+A local folder library wraps its manifest key in `local()`: `inst(Button, lib(local(my-kit)), canvas(Atoms/Buttons))` - the key is the folder's plain name, written bare even with spaces or parentheses (`lib(local(Material 3 Kit))`), and quoted only when it contains a comma, quote, or newline. Older files written as `lib(@acme/design-kit)` or with a bare local key (`lib(my-kit)`) still read fine and are rewritten to the current form on the next save. Everything else is a normal instance: `at()` picks a variant, `override()` and slots work as usual, and overrides survive library updates. Library content is read-only from the consuming project, so master edits happen in the library project itself. A library instance renders with the library's own design system by default; add the `projds` token on the instance line to re-theme it with the consuming project's tokens. Adding libraries, updates, and everything else: `reference/libraries`.

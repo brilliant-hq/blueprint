@@ -941,7 +941,10 @@ Variant   ::= "variant(" AxisVal ( "," AxisVal )* ")"
 AxisVal   ::= AxisName "(" ValueLabel ")"
 Inst      ::= "inst(" Ref ( "," LibRef )? ( "," "canvas(" Path ")" )? ( "," "projds" )? EmbedExtras? ")"
 LibRef    ::= "lib(" LibName ")"
-LibName   ::= "@" Handle "/" ProjectName | LocalKey
+LibName   ::= Handle "/" ProjectName
+            | "local(" LocalKey ")"
+            | "@" Handle "/" ProjectName   (* read-only alias, never emitted *)
+            | LocalKey                      (* read-only alias, never emitted *)
 At        ::= "at(" AxisVal ( "," AxisVal )* ")"
 ```
 
@@ -949,7 +952,7 @@ At        ::= "at(" AxisVal ( "," AxisVal )* ")"
 - `axes[...]` (and its alias `props[...]`) declares axes and values. Both forms parse identically. Axis lists tolerate commas or spaces between axes; value lists are comma-separated. Names and labels MAY be quoted.
 - `variant(...)` on a set child records the child's coordinate.
 - `inst(ref)` places an instance; `canvas(path)` targets a cross-canvas master; the embedded extras (`emb`, plus an optional parent spec) are the self-contained storage form (§13.6).
-- `lib(...)` names a **library** the project depends on (declared in `libraries.yaml`): `@handle/project` for a published library, or the bare local manifest key (lowercase letters, digits, hyphens) for a `path:` entry. With `lib()`, `canvas(path)` is the master's canvas path INSIDE the library. Validation: `lib()` outside an `inst()` line is an error (B710), a malformed library name is an error (B711), and `lib()` without an explicit `canvas()` is an error (B712, there is no library-root default).
+- `lib(...)` names a **library** the project depends on (declared in `libraries.yaml`): `handle/project` (no `@`) for a published library, or `local(<key>)` for a `path:` entry, where `<key>` is the local manifest key (the folder's plain name; it is written bare, spaces and balanced parentheses included, and is quoted with `\"` escapes only when it contains a comma, a double quote, or a newline). Scope is structural: `local()` wraps a local key; an unwrapped name is a cloud coordinate. Two legacy spellings are read-only aliases that parse forever but are never emitted: `@handle/project` (the old cloud form) and a bare local key with no `local()` wrapper. With `lib()`, `canvas(path)` is the master's canvas path INSIDE the library. Validation: `lib()` outside an `inst()` line is an error (B710), a malformed library name or local key is an error (B711), `lib()` without an explicit `canvas()` is an error (B712, there is no library-root default), and `local(...)` wrapping a cloud coordinate shape (a name containing `/` or starting with `@`) is an error (B713, contradictory scope).
 - `projds` opts the instance out of the library's design system: without it a library instance's subtree resolves tokens against the library's own cascade; with it, against the consuming project's. It is meaningful only alongside `lib()`.
 - The parser accepts these arguments in any order after `ref`; the canonical emitted order is `lib`, `canvas`, `projds`, then the embedded extras.
 - `at(...)` sets an instance configuration on an `inst()` line or a modify line targeting an instance.
@@ -1273,7 +1276,10 @@ AxisOp        ::= "+" | "-" | AxisName "->" NewName
 Variant       ::= "variant(" AxisVal ( "," AxisVal )* ")"
 Inst          ::= "inst(" Ref ( "," LibRef )? ( "," "canvas(" Path ")" )? ( "," "projds" )? EmbedExtras? ")"
 LibRef        ::= "lib(" LibName ")"
-LibName       ::= "@" Handle "/" ProjectName | LocalKey
+LibName       ::= Handle "/" ProjectName
+                | "local(" LocalKey ")"
+                | "@" Handle "/" ProjectName   (* read-only alias, never emitted *)
+                | LocalKey                      (* read-only alias, never emitted *)
 At            ::= "at(" AxisVal ( "," AxisVal )* ")"
 Mref          ::= "mref(" Ref ( "," Category )* ")"
 Ov            ::= "ov[" Category ( "," Category )* "]"
