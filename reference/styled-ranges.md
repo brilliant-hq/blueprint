@@ -39,7 +39,7 @@ t("Read the docs to get started",$font.family,$font.size.sm) f[($color.text.seco
 
 Only solids and gradients are available on a substring; shader and image fills stay whole-element only.
 
-**Where each renders.** Gradient ranges and links both render on the canvas. A gradient range now exports at full fidelity in every lane: the raster formats (PNG/JPEG/WebP) read back the live canvas, SVG and PDF outline just the gradient glyphs to vector paths filled with the gradient (Figma's move) while the rest of the text stays real text, and HTML/React paint the span with `background-clip:text`. On export a link becomes a real anchor in HTML (`<a href>`) and SVG (`<a xlink:href>`), while PDF and the raster formats do not carry a link (the PDF exporter draws glyphs, not link annotations), so linked text exports as ordinary styled text.
+**Where each renders.** Gradient ranges and links both render on the canvas. A gradient range exports with its gradient in every lane, in two shapes: the raster formats (PNG/JPEG/WebP) read back the live canvas; on desktop, SVG and PDF outline just the gradient glyphs to vector paths filled with the gradient (Figma's move) while the rest of the text stays real text; on the web, SVG keeps the range as real text with a native gradient fill (a `<tspan>` filled by a gradient), and PDF flattens the range to the gradient's first color; HTML/React paint the span with `background-clip:text`. On export a link becomes a real anchor in HTML (`<a href>`) and SVG (`<a xlink:href>`), while PDF and the raster formats do not carry a link (the PDF exporter draws glyphs, not link annotations), so linked text exports as ordinary styled text.
 
 ## Key Patterns
 

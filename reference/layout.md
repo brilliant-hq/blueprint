@@ -29,10 +29,31 @@ al(v,g($spacing.lg),pad($spacing.xl)) s(400,hug) "Page"
 (space-between) is main-axis only. `fill:2` beside `fill:1` splits 2/3
 and 1/3.
 
+**Tweaking an existing auto layout**: on an element that already has auto
+layout, `g()`, `pad()`, `x()` and `y()` can be modified directly on a
+modify line, with no `al()` around them, and they merge: `#navbar
+g($spacing.md) pad($spacing.lg,$spacing.2xl)` changes only what it
+states and leaves direction, the other alignment axis, `wrap` and the
+cross gap alone. `pad()` expands exactly as it does inside `al()`: one
+value is uniform, two are vertical then horizontal, four are top, right,
+bottom, left. On an element with NO auto layout these need `al()`, which
+adds it in the same line: `#navbar al(v,g($spacing.md))`. An `al()` on a
+modify line MERGES field by field too, it never replaces: `#navbar
+al(g($spacing.lg))` changes the gap and leaves direction, both alignment
+axes, padding, `wrap` and the cross gap exactly as they were.
+
 **Sizing** asks "who decides this size?": content picks `hug` (text,
 buttons), the parent picks `fill`, a spec picks a fixed number. A `fill`
 child inside a `hug` ancestor on the same axis falls back to its content
 size. Prose text needs `s(fill,hug)` so it wraps rather than overflows.
+
+**Reading sizes back**: `lookup`/`get_selection` blueprints print resolved
+geometry beside sizing intent: a hug axis reads `hug:N` (its measured
+extent) and fill axes get a trailing `ext(w,h)` with their resolved
+pixels. Read-only annotations: never write them yourself; pasting them
+back changes nothing. Trust these numbers over any inference from the
+modes. A resolved extent that contradicts the layout (a fill child wider
+than its parent) is real canvas geometry, not a display artifact.
 
 **Min/max**: `min(w,h)` and `max(w,h)` clamp an element's size. They
 bound a `hug` result and floor/cap a `fill` child, with any excess

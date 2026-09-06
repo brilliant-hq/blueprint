@@ -15,7 +15,7 @@ group/ungroup, and reparenting are all DSL operations, never commands.
 
 A canvas that failed to load refuses every mutating command with an error naming the canvas (its saves are blocked, so edits there would be lost). Read-only commands like `copy` still work, and `delete_canvas` stays available so a corrupt canvas can be removed.
 
-Commands run sequentially; pass `previewIds` + `previewScale` for a PNG.
+Commands run sequentially; pass `previewIds` + `previewScale` for a PNG. If your session declared `vision: false` at `init`, that preview comes back as a textual render summary (bounds in parent and world space, layout checks, fills) instead of an image.
 
 Element-operation commands act only on the `elementIds` (or `parts`) you pass: they never read the app's live selection. **An element command called with no targets is refused, never silently succeeded**: if it cannot name an element it cannot change anything, so it says so instead of reporting success. Only commands that genuinely take no target run id-less (canvas background and board, `clear_elements`, undo/redo/paste, view and tool toggles, zoom, canvas/folder management, design-system and library acts). `set_stroke_dash` on an element that has no stroke likewise refuses (add a stroke first).
 

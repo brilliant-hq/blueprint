@@ -53,6 +53,11 @@ Anything you might modify or delete needs `#ref`, not just a name.
 id/ref is always a create. To move an element OR create a child inside
 an existing one, use `parent(#target)` (see `blueprint/directives`).
 
+**A modify only changes the props you name**; omitted props are kept. On a
+ROTATED element, `#ref p(x,y)` moves it and `#ref rot(N)` rotates it about
+its center, both keeping the current size, so you never need to re-send `s()`
+alongside `p()`/`rot()` to hold the size. Send `s()` only to actually resize.
+
 **Annotations**: `//` and `--` strip from any line. `// label` also sets
 an undo checkpoint; `--` is plain narration.
 

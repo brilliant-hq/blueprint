@@ -39,7 +39,10 @@ Every color slot takes a `$token` (solid fills, gradient stops, shader
 colors, effect colors); token-bound stops follow brand and mode. While a
 design system is active, bare hex in these slots is rejected: use a `$token`
 (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)). With no design system, use hex directly (a `$token` is what
-gets rejected then). Radial accepts placement:
+gets rejected then); `oklch()` and `hsl()`/`hsla()` are also accepted there and
+are converted to hex for you, with a note naming the color that was stored (an
+alpha argument becomes `o(N)`). With a design system active they are rejected
+like bare hex: define the color as a token instead. Radial accepts placement:
 `radial(cx(25),cy(15),r(50),$primary.mid,$primary.intense)`. Diamond shares
 radial's geometry (`diamond(cx,cy,ex,ey,...)` or the shorthand above; it has no
 `cx()/cy()/r()` percentage form). Linear takes an optional `w(wx,wy)` third
