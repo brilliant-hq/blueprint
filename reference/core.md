@@ -17,7 +17,10 @@ rectangle, `c` circle, `t("text",font,size)`, `line(...)` straight line
 (sugar over a vector, see `blueprint/lines`), `fr` frame, `gr` group,
 `al()` auto layout, `svg(icon:name)` Phosphor icon, `v()` vector
 (charts and freeform paths only), `mask` / `mask(alpha)` /
-`mask(luminance)` mask frame (last child is the mask shape),
+`mask(luminance)` mask frame (its TOP child, last in z-order, is the clip
+silhouette; a plain create/paste into a mask lands BELOW the shape as masked
+content and never becomes the mask, so appending can't silently blank the
+frame; `after(#shape)` to make a new element the mask on purpose),
 `bool(union|subtract|intersect|exclude)` boolean-op frame. Only
 `fr`/`gr`/`al()`/`mask`/`bool()` take children.
 

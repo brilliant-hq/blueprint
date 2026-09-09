@@ -1020,7 +1020,7 @@ MaskKind   ::= "vector" | "alpha" | "luminance"
 BoolOp     ::= "union" | "subtract" | "intersect" | "exclude" | "u" | "s" | "i" | "x"
 ```
 
-- `mask` (bare) is a vector mask; `mask(alpha)` and `mask(luminance)` select the other kinds. The last child is the mask shape; earlier children are the masked content. An unknown kind errors and defaults to vector.
+- `mask` (bare) is a vector mask; `mask(alpha)` and `mask(luminance)` select the other kinds. The last child (top of z-order) is the mask shape; earlier children are the masked content. A plain create, paste or `parent(#mask)` into an existing mask lands BELOW the shape as masked content and never becomes the mask; to make a new element the mask on purpose, place it on top with `after(#oldshape)`. An unknown kind errors and defaults to vector.
 - `bool(op)` combines children by union, subtract, intersect, or exclude; the short aliases `u`, `s`, `i`, `x` are accepted. An unknown op errors and still creates a frame.
 
 NOTE: The parser accepts the short boolean aliases and bare `mask`; the encoder emits only the long forms and `mask` for the vector default. The accepted-input set is a superset of the emitted-output set.

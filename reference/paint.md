@@ -84,6 +84,9 @@ st[(metal($amber.mid,$amber.faint),w($stroke.width.mid))]
 
 `pos(c|i|o)` aligns the stroke center / inside / outside. Caps are set
 per node (vector endpoints) and per circle, not on the stroke.
+`join(m|r|b)` picks the corner join (miter / round, the default / bevel) and
+`miter(N)` its miter limit (default 4); `dash(on,off,...)` patterns the stroke
+and `dashcap(...)` caps each dash. Reads omit defaults.
 
 `w(t,r,b,l)` sets per-side widths on rectangles and frames. With a design
 system active, give every side a stroke-width token; `$stroke.width.none` is

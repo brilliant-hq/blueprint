@@ -32,6 +32,13 @@ al(h,pad($spacing.sm)) after(#logo) parent(#nav) "Search"
 al(v,g($spacing.sm)) s(fill,hug) parent(#pricing) "New row"
 -- on a CREATE, parent() puts the new element inside #pricing instead of as a sibling
 
+r s(100,30) parent(#modalmask) "Due date pill"
+-- into a MASK frame, a plain create (or paste) lands BELOW the mask shape.
+-- A mask's TOP child (last in z-order) is its clip silhouette; every other
+-- child is masked content. Appending never steals the mask, so it can't
+-- silently blank the frame. To make a NEW element the mask itself, place it on
+-- top on purpose: `#newshape after(#oldshape)`.
+
 ungroup(#legacy_header)
 -- ungroup() dissolves a frame/group, lifting its children into the parent
 
