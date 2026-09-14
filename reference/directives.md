@@ -9,7 +9,8 @@ and modify lines in one call; target by 16-char `id` or session `#ref`.
 
 A `#pricing` card from an earlier call, revised in one pass. `--` lines
 are notes; an inline `// label` snapshots an undo checkpoint after its
-line runs (before any indented children).
+line runs (before any indented children), and a full-line `// label` does the
+same before the next line runs.
 
 ```
 before(#pricing) fr s(360,480) f[(radial($primary.soft,$color.surface))] rd($radius.xl) "Glow"

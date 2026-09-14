@@ -73,7 +73,9 @@ its center, both keeping the current size, so you never need to re-send `s()`
 alongside `p()`/`rot()` to hold the size. Send `s()` only to actually resize.
 
 **Annotations**: `//` and `--` strip from any line. `// label` also sets
-an undo checkpoint; `--` is plain narration.
+an undo checkpoint; `--` is plain narration. A full-line `// label` is that
+checkpoint mark on its own line, not a stripped comment. A checkpoint from a
+block that halts before any line applied does not persist.
 
 **Tokens**: in explicit mode every color, font, and scale slot takes a
 `$token`; bare hex or numerics halt the call (see [`design-systems/core`](https://github.com/brilliant-hq/brilliant/blob/main/knowledge/design-systems/core.md)).
