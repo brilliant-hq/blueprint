@@ -46,3 +46,11 @@ Regions (faces) can be declared explicitly inside `v()`:
 (`edgeId` + `+`/`-` direction), `hole` subtracts. Assign a region's fill
 with a `vr(rN) f[...]` continuation line (rN = 1-based position in the
 regions list). Reading a canvas returns vectors in this same form.
+
+**Reading a large vector.** A vector whose geometry would blow the readback
+token budget (a big imported SVG, thousands of nodes) comes back summarized:
+a bare `v()` plus a one-line note carrying its node count, region count and
+bounds. To get the full node/edge graph of that one vector, re-request it
+with `lookup({scope:["<id>"], format:"blueprint", full:true})` (scope it to
+the element to keep the response bounded), or pull the SVG bytes with
+`export({ids:["<id>"], format:"svg"})`. Small vectors return verbatim.

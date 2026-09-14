@@ -34,7 +34,9 @@ al(v,g($spacing.lg),pad($spacing.lg)) s(hug,hug) f[($color.surface.container)] r
       t("Label",$font.family,$font.size.md) s(fill,hug) f[($color.text.primary)]
       inst(#toggle) at(state(on))                                                -- compose: this row (organism) instances the Toggle (molecule)
 
--- USE. at() picks the variant; override() retargets a #ref'd child; override(#slot) slot + indented fills a slot.
+-- USE. at() picks the variant; override() retargets a #ref'd child; override(#slot) slot + indented fills a slot
+-- at creation: the slot element IS the container, indented lines become its direct children (the badge
+-- below is content, not a wrapper; a bare svg line is enough when you want no badge).
 al(v,g($spacing.sm),pad($spacing.lg)) s(hug,hug) f[($color.surface.container)] rd($radius.lg) "Settings" #list
   inst(#row) at(accessory(chevron))
     override(#row_title) t("Wi-Fi")
@@ -54,9 +56,9 @@ al(v,g($spacing.sm),pad($spacing.lg)) s(hug,hug) f[($color.surface.container)] r
     t("Label",$font.family,$font.size.md) s(fill,hug) f[($color.text.primary)]
 ```
 
-Reconfigure on canvas: `#row_2 at(accessory(toggle))`; `override()` on a non-slot child changes its existing props (locks that category vs master edits); new content needs a `slot`.
+Reconfigure on canvas: `#row_2 at(accessory(toggle))`; `override()` on a non-slot child changes its existing props (locks that category vs master edits); new content needs a `slot`. Fill an EXISTING empty slot later by creating into it: `svg(icon:wifi-high) s(18,18) parent(<slotId>)` (the slot's id from lookup); never re-state the slot with a container inside, that nests a second wrapper that swallows the content. Before authoring into a slot, read it with `lookup({scope:[<instanceId>], format:"blueprint", expandInstances:true})`: the summary prints only `override(<slotId>) slot`, the expanded form shows the slot's real children.
 
-Reconfigure a NESTED instance copy the same way, by its own id: when a set variant composes another instance (an atom inside a molecule), each outer-instance copy materializes its own copy of that nested instance with its own id. Retarget it with `<copyId> at(axis(value))` (look the id up with `lookup`). This is the right way to express per-use variant drift (e.g. one row's button is `primary`, the rest `secondary`) — reconfigure the nested copy, not a raw fill override on it.
+Reconfigure a NESTED instance copy the same way, by its own id: when a set variant composes another instance (an atom inside a molecule), each outer-instance copy materializes its own copy of that nested instance with its own id. Retarget it with `<copyId> at(axis(value))` (look the id up with `lookup`). This is the right way to express per-use variant drift (e.g. one row's button is `primary`, the rest `secondary`): reconfigure the nested copy, not a raw fill override on it.
 
 `override()` targets a master child, by the `#ref` assigned when the master was built, by a master-child id (any variant's works), or by exact child name, and lands on that instance's own copy. Give each new element its own fresh `#ref`; re-using a taken ref keeps the original binding.
 

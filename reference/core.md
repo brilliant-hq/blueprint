@@ -37,8 +37,8 @@ H `l|r|c|lr|scale`, V `t|b|c|tb|scale` = left/right/center/stretch/scale
 edge; default `pin(l,t)`; a slot left empty keeps that axis: `pin(,c)` sets
 only vertical; only valid on a plain-frame child, or an `abs` auto-layout
 child, never a flow child or a group child),
-`hidden` (invisible), `locked`, `constrain` (lock aspect ratio;
-`no-constrain` clears). `c` in
+`hidden` (invisible; `no-hidden` clears), `locked`, `constrain` (lock
+aspect ratio; `no-constrain` clears). `c` in
 `p()` centers: `p(c,c)`. Omit `p()` on top-level elements; they
 auto-place beside existing work. SVG size goes in `s(W,H)`, not `svg()`.
 
@@ -51,10 +51,21 @@ wrapping: see `blueprint/layout`.
 first token modifies that element; a trailing `#ref` assigns one. A
 trailing `"text"` is a NAME, display only, NOT addressable later.
 Anything you might modify or delete needs `#ref`, not just a name.
+`#ref` = hex id everywhere: rows, directives, lookup, export, commands,
+previewIds, and `<el id="#ref">Name</el>` in replies. Never look one up
+to get the other; never write `#` before a hex id.
 
 **Modify is flat**: one line per element, never indented. A line with no
 id/ref is always a create. To move an element OR create a child inside
-an existing one, use `parent(#target)` (see `blueprint/directives`).
+an existing one, use `parent(#target)` (see `blueprint/directives`). An
+indented leading-`#ref` line whose element is NOT already a child of the
+line above is refused, never silently moved -- use `parent(#target)`.
+
+**The canvas tools are the only write path to a canvas**: use
+`create_modify_elements` / `execute_commands` (or the `<objects>` block in your
+reply). Never edit a `.bl` or `.design` file with bash, python, or the file
+tools: the app reloads it from disk, so your write is discarded and every
+element id you hold goes stale.
 
 **A modify only changes the props you name**; omitted props are kept. On a
 ROTATED element, `#ref p(x,y)` moves it and `#ref rot(N)` rotates it about

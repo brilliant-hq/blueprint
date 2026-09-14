@@ -31,6 +31,9 @@ al(h,pad($spacing.sm)) after(#logo) parent(#nav) "Search"
 -- parent() reparents an existing element; its on-screen position holds
 al(v,g($spacing.sm)) s(fill,hug) parent(#pricing) "New row"
 -- on a CREATE, parent() puts the new element inside #pricing instead of as a sibling
+-- parent() and before()/after() must name the SAME parent: if the anchor
+-- lives in a different parent than parent() names, the line is refused
+-- (a contradiction is never guessed at) -- drop one of the two.
 
 r s(100,30) parent(#modalmask) "Due date pill"
 -- into a MASK frame, a plain create (or paste) lands BELOW the mask shape.
@@ -51,8 +54,13 @@ delete(#placeholder)  // structure revised
 clone(#pricing) p(400,0) ds(, theme(dark)) "Pricing Dark" #pricing_dark
   #plan_name t("Pro")  // dark variant added
 -- clone() deep-copies; clone-line props override its root, indented
--- child lines (leading #ref) retarget descendants. The // on that last
--- child checkpoints the finished clone.
+-- child lines (leading #ref) retarget descendants OF THE COPY. The // on
+-- that last child checkpoints the finished clone.
+-- An indented line naming anything that is not in the copy is refused,
+-- never applied to the original: write it flat to edit the original, or
+-- parent(#clone_ref) on a flat line to move it into the copy.
+-- clone() is same-canvas: the #ref/id must live on THIS canvas. To copy
+-- from another canvas, lookup the element there, then create it here.
 ```
 
 A `// label` snapshots the session undo stack. Later, in any call this
