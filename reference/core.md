@@ -58,8 +58,10 @@ to get the other; never write `#` before a hex id.
 **Modify is flat**: one line per element, never indented. A line with no
 id/ref is always a create. To move an element OR create a child inside
 an existing one, use `parent(#target)` (see `blueprint/directives`). An
-indented leading-`#ref` line whose element is NOT already a child of the
-line above is refused, never silently moved -- use `parent(#target)`.
+indented line whose element already exists (a leading `#ref`/id, or a
+trailing `#ref` that resolves to a live element) but is NOT already a child
+of the line above is refused, never silently moved: to move it write
+`#ref parent(#enclosing)`, to update it in place write it flat.
 
 **The canvas tools are the only write path to a canvas**: use
 `create_modify_elements` / `execute_commands` (or the `<objects>` block in your
