@@ -53,7 +53,9 @@ trailing `"text"` is a NAME, display only, NOT addressable later.
 Anything you might modify or delete needs `#ref`, not just a name.
 `#ref` = hex id everywhere: rows, directives, lookup, export, commands,
 previewIds, and `<el id="#ref">Name</el>` in replies. Never look one up
-to get the other; never write `#` before a hex id.
+to get the other; never write `#` before a hex id. An element you create
+without a `#ref` gets one from Brilliant, a letter plus a number (`#g1`,
+`#h12`); it comes back in the result and works like any ref you wrote.
 
 **Modify is flat**: one line per element, never indented. A line with no
 id/ref is always a create. To move an element OR create a child inside
