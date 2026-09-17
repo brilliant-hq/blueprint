@@ -4,73 +4,39 @@ dsl: [parent, before, after, clone, replace, ungroup, undo]
 ---
 # Blueprint Directives
 
-Directives edit elements that already exist. They mix freely with create
-and modify lines in one call; target by 16-char `id` or session `#ref`.
+Directives edit elements that already exist. They mix freely with create and modify lines in one call. Target by 16-char `id` or session `#ref`.
 
-A `#pricing` card from an earlier call, revised in one pass. `--` lines
-are notes; an inline `// label` snapshots an undo checkpoint after its
-line runs (before any indented children), and a full-line `// label` does the
-same before the next line runs.
+A `#pricing` card from an earlier call, revised in one pass. `--` lines are notes. An inline `// label` snapshots an undo checkpoint after its line runs (before any indented children), and a full-line `// label` does the same before the next line runs.
 
 ```
 before(#pricing) fr s(360,480) f[(radial($primary.soft,$color.surface))] rd($radius.xl) "Glow"
--- before() on the NEW element places it earlier in z-order, behind #pricing
-
+-- before() on a NEW element places it earlier in z-order, behind #pricing
 al(h,pad($spacing.sm)) after(#logo) parent(#nav) "Search"
--- after(#sibling) places the element right AFTER that sibling (the mirror
--- of before()). after() the LAST child appends to the end. The element id
--- must LEAD the line: `#icon after(#label)`, never `after(#label) #icon`.
-
+-- after(#sibling) places the element right AFTER that sibling (the mirror of before()). after() the LAST child appends to the end. The element id must LEAD the line: `#icon after(#label)`, never `after(#label) #icon`.
 #icon after(#label)
--- on an existing element, after() reorders it to sit just after #label
--- (reparenting into #label's parent if needed). before() mirrors it:
--- `#icon before(#label)` reorders #icon to sit just BEFORE #label, likewise
--- reparenting into #label's parent when they differ. Both work on existing
--- elements and on new ones.
-
+-- on an existing element, after() reorders it to sit just after #label (reparenting into #label's parent if needed). before() mirrors it: `#icon before(#label)` reorders #icon just BEFORE #label, likewise reparenting when the parents differ. Both work on existing and on new elements.
 #popular parent(#pricing)
--- parent() reparents an existing element; its on-screen position holds
+-- parent() reparents an existing element, its on-screen position holds
 al(v,g($spacing.sm)) s(fill,hug) parent(#pricing) "New row"
 -- on a CREATE, parent() puts the new element inside #pricing instead of as a sibling
--- parent() and before()/after() must name the SAME parent: if the anchor
--- lives in a different parent than parent() names, the line is refused
--- (a contradiction is never guessed at) -- drop one of the two.
-
 r s(100,30) parent(#modalmask) "Due date pill"
--- into a MASK frame, a plain create (or paste) lands BELOW the mask shape.
--- A mask's TOP child (last in z-order) is its clip silhouette; every other
--- child is masked content. Appending never steals the mask, so it can't
--- silently blank the frame. To make a NEW element the mask itself, place it on
--- top on purpose: `#newshape after(#oldshape)`.
-
+-- a plain create into a MASK frame lands BELOW the mask shape as masked content (the mask rule lives in blueprint/core)
 ungroup(#legacy_header)
 -- ungroup() dissolves a frame/group, lifting its children into the parent
-
 replace(#cta) al(h,x(c),y(c),g($spacing.sm),pad($spacing.sm,$spacing.lg)) s(fill,hug) f[($color.primary)] rd($radius.md) "Buy"
 -- replace() deletes #cta, inserts the new element at its exact position
-
 delete(#placeholder)  // structure revised
 -- delete() removes an element and its children
-
 clone(#pricing) p(400,0) ds(, theme(dark)) "Pricing Dark" #pricing_dark
   #plan_name t("Pro")  // dark variant added
--- clone() deep-copies; clone-line props override its root, indented
--- child lines (leading #ref) retarget descendants OF THE COPY. The // on
--- that last child checkpoints the finished clone.
--- An indented line naming anything that is not in the copy is refused,
--- never applied to the original: write it flat to edit the original, or
--- parent(#clone_ref) on a flat line to move it into the copy.
--- clone() is same-canvas: the #ref/id must live on THIS canvas. To copy
--- from another canvas, lookup the element there, then create it here.
+-- clone() deep-copies. Clone-line props override its root, and indented child lines (leading #ref) retarget descendants OF THE COPY. The // on that last child checkpoints the finished clone. clone() is same-canvas: the #ref/id must live on THIS canvas. To copy from another canvas, lookup the element there then create it here.
 ```
 
-A `// label` snapshots the session undo stack. Later, in any call this
-session, jump between snapshots:
+A `// label` snapshots the session undo stack. Later, in any call this session, jump between snapshots:
 
 ```
 undo("structure revised")    -- rewind: drops #pricing_dark, back to the checkpoint
 redo("dark variant added")   -- changed your mind: replay forward, it returns
 ```
 
-Labels are interchangeable: `undo("dark variant added")`,
-`undo(dark_variant_added)`, `undo(#dark_variant_added)`.
+Labels are interchangeable: `undo("dark variant added")`, `undo(dark_variant_added)`, `undo(#dark_variant_added)`.
